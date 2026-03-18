@@ -122,41 +122,12 @@ function AuthExperience() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-6 py-8">
+    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 sm:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.22),transparent_30%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.18),transparent_30%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <section className="space-y-8">
-          <Badge className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.28em]">Stakeholder Network Globe</Badge>
-          <div className="space-y-5">
-            <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.04em] text-foreground sm:text-6xl">
-              A production-ready stakeholder command center built around a living globe.
-            </h1>
-            <p className="max-w-2xl text-lg text-muted-foreground">
-              Onboard users, authenticate securely, map global relationships, and drill into profiles, feed activity, and collaboration signals from one unified experience.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { icon: Globe2, title: "Geographic network", text: "Interactive world view with relationship arcs and exploration modes." },
-              { icon: ShieldCheck, title: "Verified auth", text: "Email verification, password recovery, and Google/Apple sign-in are ready." },
-              { icon: Sparkles, title: "Command-center UX", text: "Navigator, overlays, onboarding, and profile intelligence in one route." },
-            ].map((item) => (
-              <div key={item.title} className="command-panel space-y-3 p-5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <Card className="border-border/70 bg-card/88 shadow-[0_28px_90px_hsl(var(--foreground)/0.16)] backdrop-blur-xl">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-7xl items-start gap-5 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8">
+        <Card className="order-1 border-border/70 bg-card/88 shadow-[0_28px_90px_hsl(var(--foreground)/0.16)] backdrop-blur-xl lg:order-2">
           <CardHeader className="space-y-4">
-            <div className="inline-flex rounded-full border border-border bg-muted p-1">
+            <div className="inline-flex w-full rounded-full border border-border bg-muted p-1">
               {[
                 { key: "signin", label: "Sign in" },
                 { key: "signup", label: "Create account" },
@@ -165,7 +136,7 @@ function AuthExperience() {
                 <button
                   key={tab.key}
                   type="button"
-                  className={`rounded-full px-4 py-2 text-sm transition ${mode === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
+                  className={`flex-1 rounded-full px-3 py-2 text-sm transition sm:px-4 ${mode === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
                   onClick={() => setMode(tab.key as typeof mode)}
                 >
                   {tab.label}
@@ -209,6 +180,35 @@ function AuthExperience() {
             </div>
           </CardContent>
         </Card>
+
+        <section className="order-2 space-y-5 lg:order-1 lg:space-y-8">
+          <Badge className="rounded-full px-4 py-1 text-[11px] uppercase tracking-[0.28em]">Stakeholder Network Globe</Badge>
+          <div className="space-y-4 lg:space-y-5">
+            <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl lg:text-6xl">
+              A production-ready stakeholder command center built around a living globe.
+            </h1>
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              Onboard users, authenticate securely, map global relationships, and drill into profiles, feed activity, and collaboration signals from one unified experience.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {[
+              { icon: Globe2, title: "Geographic network", text: "Interactive world view with relationship arcs and exploration modes." },
+              { icon: ShieldCheck, title: "Verified auth", text: "Email verification, password recovery, and Google/Apple sign-in are ready." },
+              { icon: Sparkles, title: "Command-center UX", text: "Navigator, overlays, onboarding, and profile intelligence in one route." },
+            ].map((item) => (
+              <div key={item.title} className="command-panel space-y-3 p-5">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
