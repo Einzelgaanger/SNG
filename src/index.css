@@ -97,6 +97,7 @@
 
 @layer components {
   .command-panel {
-    @apply rounded-[2rem] border border-border/70 bg-card/78 backdrop-blur-xl;
+    @apply rounded-[2rem] border border-border/70 backdrop-blur-xl;
+    background-color: hsl(var(--card) / 0.8);
   }
 }

@@ -72,7 +72,10 @@ function AuthExperience() {
       if (mode === "signin") {
         const parsed = signInSchema.safeParse({ email, password });
         if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Invalid credentials");
-        const { error } = await supabase.auth.signInWithPassword(parsed.data);
+        const { error } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
         if (error) throw error;
         toast.success("Signed in successfully.");
       }
