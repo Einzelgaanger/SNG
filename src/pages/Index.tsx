@@ -6,7 +6,6 @@ import {
   Globe2,
   LayoutPanelLeft,
   LogOut,
-  Mail,
   MapPin,
   Orbit,
   Search,
@@ -26,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/use-auth";
+import { useProfile } from "@/hooks/use-profile";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -36,9 +37,7 @@ import {
   type OnboardingValues,
 } from "@/lib/auth-schemas";
 import { buildArcs, buildFeedPosts, buildInsights, buildStakeholders, interestCatalog, regionOptions } from "@/lib/mock-stakeholders";
-import { useAuth } from "@/hooks/use-auth";
-import { useProfile } from "@/hooks/use-profile";
-import type { Stakeholder, StakeholderType, VisualMode } from "@/types/sng";
+import type { StakeholderType, VisualMode } from "@/types/sng";
 
 const stakeholderTypeOptions: { value: StakeholderType; label: string; blurb: string }[] = [
   { value: "entrepreneur", label: "Entrepreneur", blurb: "Operators building new ventures and pilots." },
@@ -123,41 +122,12 @@ function AuthExperience() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-6 py-8">
+    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 sm:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.22),transparent_30%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.18),transparent_30%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <section className="space-y-8">
-          <Badge className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.28em]">Stakeholder Network Globe</Badge>
-          <div className="space-y-5">
-            <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.04em] text-foreground sm:text-6xl">
-              A production-ready stakeholder command center built around a living globe.
-            </h1>
-            <p className="max-w-2xl text-lg text-muted-foreground">
-              Onboard users, authenticate securely, map global relationships, and drill into profiles, feed activity, and collaboration signals from one unified experience.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { icon: Globe2, title: "Geographic network", text: "Interactive world view with relationship arcs and exploration modes." },
-              { icon: ShieldCheck, title: "Verified auth", text: "Email verification, password recovery, and Google/Apple sign-in are ready." },
-              { icon: Sparkles, title: "Command-center UX", text: "Navigator, overlays, onboarding, and profile intelligence in one route." },
-            ].map((item) => (
-              <div key={item.title} className="command-panel space-y-3 p-5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <Card className="border-border/70 bg-card/88 shadow-[0_28px_90px_hsl(var(--foreground)/0.16)] backdrop-blur-xl">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-7xl items-start gap-5 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8">
+        <Card className="order-1 border-border/70 bg-card/88 shadow-[0_28px_90px_hsl(var(--foreground)/0.16)] backdrop-blur-xl lg:order-2">
           <CardHeader className="space-y-4">
-            <div className="inline-flex rounded-full border border-border bg-muted p-1">
+            <div className="inline-flex w-full rounded-full border border-border bg-muted p-1">
               {[
                 { key: "signin", label: "Sign in" },
                 { key: "signup", label: "Create account" },
@@ -166,7 +136,7 @@ function AuthExperience() {
                 <button
                   key={tab.key}
                   type="button"
-                  className={`rounded-full px-4 py-2 text-sm transition ${mode === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
+                  className={`flex-1 rounded-full px-3 py-2 text-sm transition sm:px-4 ${mode === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
                   onClick={() => setMode(tab.key as typeof mode)}
                 >
                   {tab.label}
@@ -201,15 +171,44 @@ function AuthExperience() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <Button variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("google")}>
+              <Button type="button" variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("google")}>
                 Google
               </Button>
-              <Button variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("apple")}>
+              <Button type="button" variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("apple")}>
                 Apple
               </Button>
             </div>
           </CardContent>
         </Card>
+
+        <section className="order-2 space-y-5 lg:order-1 lg:space-y-8">
+          <Badge className="rounded-full px-4 py-1 text-[11px] uppercase tracking-[0.28em]">Stakeholder Network Globe</Badge>
+          <div className="space-y-4 lg:space-y-5">
+            <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl lg:text-6xl">
+              A production-ready stakeholder command center built around a living globe.
+            </h1>
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              Onboard users, authenticate securely, map global relationships, and drill into profiles, feed activity, and collaboration signals from one unified experience.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {[
+              { icon: Globe2, title: "Geographic network", text: "Interactive world view with relationship arcs and exploration modes." },
+              { icon: ShieldCheck, title: "Verified auth", text: "Email verification, password recovery, and Google/Apple sign-in are ready." },
+              { icon: Sparkles, title: "Command-center UX", text: "Navigator, overlays, onboarding, and profile intelligence in one route." },
+            ].map((item) => (
+              <div key={item.title} className="command-panel space-y-3 p-5">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
@@ -406,13 +405,13 @@ function OnboardingExperience() {
             )}
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="ghost" onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || isSaving}>
+              <Button type="button" variant="ghost" onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || isSaving}>
                 Back
               </Button>
               {step < 5 ? (
-                <Button onClick={next}>Continue</Button>
+                <Button type="button" onClick={next}>Continue</Button>
               ) : (
-                <Button onClick={complete} disabled={isSaving}>
+                <Button type="button" onClick={complete} disabled={isSaving}>
                   {isSaving ? "Saving..." : "Enter SNG"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -435,7 +434,7 @@ function NetworkExperience() {
   const [showCountries, setShowCountries] = useState(true);
   const [autoRotate, setAutoRotate] = useState(true);
   const [nightLights, setNightLights] = useState(false);
-  const [navigatorOpen, setNavigatorOpen] = useState(true);
+  const [navigatorOpen, setNavigatorOpen] = useState(() => (typeof window !== "undefined" ? window.innerWidth >= 1280 : true));
   const [activeTab, setActiveTab] = useState<"profile" | "feed" | "ai">("profile");
   const [selectedId, setSelectedId] = useState<string | null>("viewer-profile");
 
@@ -459,239 +458,251 @@ function NetworkExperience() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-background px-3 py-3 sm:px-4 sm:py-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.16),transparent_24%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.14),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 grid min-h-[calc(100vh-1.5rem)] gap-3 xl:grid-cols-[320px_minmax(0,1fr)_360px]">
-        <motion.aside layout className={`command-panel ${navigatorOpen ? "block" : "hidden xl:block"} overflow-hidden p-0`}>
-          <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.26em] text-primary">Navigator</p>
-              <h2 className="text-lg font-semibold text-foreground">Stakeholders</h2>
+      <div className="relative z-10 grid min-h-[calc(100vh-1.5rem)] gap-3 xl:grid-cols-[300px_minmax(0,1fr)_360px]">
+        <motion.aside
+          layout
+          className={`${navigatorOpen ? "block" : "hidden"} order-3 overflow-hidden p-0 xl:order-none xl:block`}
+        >
+          <div className="command-panel h-full overflow-hidden p-0">
+            <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.26em] text-primary">Navigator</p>
+                <h2 className="text-lg font-semibold text-foreground">Stakeholders</h2>
+              </div>
+              <Badge>{filteredStakeholders.length}</Badge>
             </div>
-            <Badge>{filteredStakeholders.length}</Badge>
-          </div>
-          <div className="space-y-4 p-5">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search people, orgs, regions" value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {["all", ...stakeholderTypeOptions.map((item) => item.value)].map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.2em] ${typeFilter === option ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
-                  onClick={() => setTypeFilter(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-          <ScrollArea className="h-[calc(100vh-17rem)] px-3 pb-4">
-            <div className="space-y-2 px-2">
-              {filteredStakeholders.map((stakeholder) => (
-                <button
-                  key={stakeholder.id}
-                  type="button"
-                  className={`w-full rounded-3xl border p-4 text-left transition ${selectedStakeholder.id === stakeholder.id ? "border-primary bg-primary/10" : "border-border bg-background/55 hover:bg-background"}`}
-                  onClick={() => setSelectedId(stakeholder.id)}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium text-foreground">{stakeholder.name}</p>
-                      <p className="text-sm text-muted-foreground">{stakeholder.organization}</p>
-                    </div>
-                    <Badge variant="secondary">{stakeholder.type}</Badge>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {stakeholder.city}, {stakeholder.country}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </ScrollArea>
-        </motion.aside>
-
-        <section className="command-panel flex min-h-[70vh] flex-col gap-3 overflow-hidden p-3">
-          <header className="grid gap-3 xl:grid-cols-[1fr_auto]">
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/60 px-4 py-3 backdrop-blur-sm">
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge className="rounded-full px-3 py-1 uppercase tracking-[0.22em]">SNG</Badge>
-                <span className="text-sm text-muted-foreground">{stakeholders.length} global nodes</span>
-                <span className="text-sm text-muted-foreground">{arcs.length} active relationships</span>
-                <span className="text-sm text-muted-foreground">Mode: {visualMode}</span>
+            <div className="space-y-4 p-5">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input className="pl-9" placeholder="Search people, orgs, regions" value={search} onChange={(e) => setSearch(e.target.value)} />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {["all", ...stakeholderTypeOptions.map((item) => item.value)].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.2em] ${typeFilter === option ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
+                    onClick={() => setTypeFilter(option)}
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button variant="secondary" size="sm" onClick={() => setNavigatorOpen((current) => !current)}>
-                <LayoutPanelLeft className="h-4 w-4" />
-                Navigator
-              </Button>
-              <Button variant="secondary" size="sm" onClick={() => signOut()}>
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </Button>
-            </div>
-          </header>
-
-          <div className="relative flex-1">
-            <GlobeScene
-              arcs={arcs}
-              autoRotate={autoRotate}
-              mode={visualMode}
-              nightLights={nightLights}
-              selectedId={selectedStakeholder.id}
-              showConnections={showConnections}
-              showCountries={showCountries}
-              stakeholders={filteredStakeholders}
-              onSelect={(stakeholder) => setSelectedId(stakeholder.id)}
-            />
-
-            <div className="absolute left-4 top-4 flex max-w-[420px] flex-wrap gap-2">
-              {visualModes.map((mode) => (
-                <button
-                  key={mode.value}
-                  type="button"
-                  className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.22em] backdrop-blur-sm ${visualMode === mode.value ? "border-primary bg-background/95 text-foreground" : "border-border bg-background/60 text-muted-foreground"}`}
-                  onClick={() => setVisualMode(mode.value)}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="absolute bottom-4 left-4 right-4 grid gap-3 lg:grid-cols-2 xl:grid-cols-5">
-              {[
-                { label: "Auto rotate", value: autoRotate, setValue: setAutoRotate, icon: Orbit },
-                { label: "Connections", value: showConnections, setValue: setShowConnections, icon: Sparkles },
-                { label: "Country grid", value: showCountries, setValue: setShowCountries, icon: Globe2 },
-                { label: "Night lights", value: nightLights, setValue: setNightLights, icon: ShieldCheck },
-                { label: "Filter active", value: typeFilter !== "all", setValue: () => setTypeFilter("all"), icon: Filter },
-              ].map((toggle) => (
-                <button
-                  key={toggle.label}
-                  type="button"
-                  className={`rounded-[1.25rem] border px-4 py-3 text-left backdrop-blur-md ${toggle.value ? "border-primary bg-background/92" : "border-border bg-background/58"}`}
-                  onClick={() => toggle.setValue(typeof toggle.value === "boolean" ? !toggle.value : false)}
-                >
-                  <div className="flex items-center gap-3">
-                    <toggle.icon className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{toggle.label}</p>
-                      <p className="text-xs text-muted-foreground">{toggle.value ? "Enabled" : "Disabled"}</p>
+            <ScrollArea className="max-h-[24rem] xl:h-[calc(100vh-17rem)] xl:max-h-none px-3 pb-4">
+              <div className="space-y-2 px-2">
+                {filteredStakeholders.map((stakeholder) => (
+                  <button
+                    key={stakeholder.id}
+                    type="button"
+                    className={`w-full rounded-3xl border p-4 text-left transition ${selectedStakeholder.id === stakeholder.id ? "border-primary bg-primary/10" : "border-border bg-background/55 hover:bg-background"}`}
+                    onClick={() => {
+                      setSelectedId(stakeholder.id);
+                      setNavigatorOpen(false);
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-foreground">{stakeholder.name}</p>
+                        <p className="text-sm text-muted-foreground">{stakeholder.organization}</p>
+                      </div>
+                      <Badge variant="secondary">{stakeholder.type}</Badge>
                     </div>
-                  </div>
-                </button>
-              ))}
+                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {stakeholder.city}, {stakeholder.country}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </motion.aside>
+
+        <section className="order-1 flex min-h-[70vh] flex-col gap-3 overflow-hidden xl:order-none">
+          <div className="command-panel flex flex-col gap-3 p-3">
+            <header className="grid gap-3 xl:grid-cols-[1fr_auto]">
+              <div className="rounded-[1.5rem] border border-border/70 bg-background/60 px-4 py-3 backdrop-blur-sm">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge className="rounded-full px-3 py-1 uppercase tracking-[0.22em]">SNG</Badge>
+                  <span className="text-sm text-muted-foreground">{stakeholders.length} global nodes</span>
+                  <span className="text-sm text-muted-foreground">{arcs.length} active relationships</span>
+                  <span className="text-sm text-muted-foreground">Mode: {visualMode}</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap justify-end gap-2">
+                <Button type="button" variant="secondary" size="sm" onClick={() => setNavigatorOpen((current) => !current)}>
+                  <LayoutPanelLeft className="h-4 w-4" />
+                  Navigator
+                </Button>
+                <Button type="button" variant="secondary" size="sm" onClick={() => signOut()}>
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </Button>
+              </div>
+            </header>
+
+            <div className="relative flex-1 min-h-[32rem]">
+              <div className="mb-3 flex flex-wrap gap-2 xl:absolute xl:left-4 xl:top-4 xl:z-10 xl:mb-0 xl:max-w-[420px]">
+                {visualModes.map((mode) => (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.22em] backdrop-blur-sm ${visualMode === mode.value ? "border-primary bg-background/95 text-foreground" : "border-border bg-background/60 text-muted-foreground"}`}
+                    onClick={() => setVisualMode(mode.value)}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+
+              <GlobeScene
+                arcs={arcs}
+                autoRotate={autoRotate}
+                mode={visualMode}
+                nightLights={nightLights}
+                selectedId={selectedStakeholder.id}
+                showConnections={showConnections}
+                showCountries={showCountries}
+                stakeholders={filteredStakeholders}
+                onSelect={(stakeholder) => setSelectedId(stakeholder.id)}
+              />
+
+              <div className="mt-3 grid gap-3 md:grid-cols-2 xl:absolute xl:bottom-4 xl:left-4 xl:right-4 xl:mt-0 xl:grid-cols-5">
+                {[
+                  { label: "Auto rotate", value: autoRotate, setValue: setAutoRotate, icon: Orbit },
+                  { label: "Connections", value: showConnections, setValue: setShowConnections, icon: Sparkles },
+                  { label: "Country grid", value: showCountries, setValue: setShowCountries, icon: Globe2 },
+                  { label: "Night lights", value: nightLights, setValue: setNightLights, icon: ShieldCheck },
+                  { label: "Clear filter", value: typeFilter !== "all", setValue: () => setTypeFilter("all"), icon: Filter },
+                ].map((toggle) => (
+                  <button
+                    key={toggle.label}
+                    type="button"
+                    className={`rounded-[1.25rem] border px-4 py-3 text-left backdrop-blur-md ${toggle.value ? "border-primary bg-background/92" : "border-border bg-background/58"}`}
+                    onClick={() => toggle.setValue(typeof toggle.value === "boolean" ? !toggle.value : false)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <toggle.icon className="h-4 w-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{toggle.label}</p>
+                        <p className="text-xs text-muted-foreground">{toggle.value ? "Enabled" : "Disabled"}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <aside className="command-panel overflow-hidden p-0">
-          <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-primary">Selected node</p>
-              <h2 className="text-lg font-semibold text-foreground">{selectedStakeholder.name}</h2>
+        <aside className="order-2 xl:order-none">
+          <div className="command-panel h-full overflow-hidden p-0">
+            <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-primary">Selected node</p>
+                <h2 className="text-lg font-semibold text-foreground">{selectedStakeholder.name}</h2>
+              </div>
+              <Badge variant="secondary">{selectedStakeholder.type}</Badge>
             </div>
-            <Badge variant="secondary">{selectedStakeholder.type}</Badge>
-          </div>
 
-          <div className="space-y-4 px-5 py-4">
-            <div className="rounded-[1.5rem] border border-border/70 bg-background/60 p-4">
-              <p className="text-sm font-medium text-foreground">{selectedStakeholder.organization}</p>
-              <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{selectedStakeholder.city}, {selectedStakeholder.country}</span>
-                <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{selectedStakeholder.region}</span>
-                <span className="inline-flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Score {selectedStakeholder.score}</span>
+            <div className="space-y-4 px-5 py-4">
+              <div className="rounded-[1.5rem] border border-border/70 bg-background/60 p-4">
+                <p className="text-sm font-medium text-foreground">{selectedStakeholder.organization}</p>
+                <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{selectedStakeholder.city}, {selectedStakeholder.country}</span>
+                  <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{selectedStakeholder.region}</span>
+                  <span className="inline-flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Score {selectedStakeholder.score}</span>
+                </div>
+              </div>
+
+              <div className="inline-flex rounded-full border border-border bg-muted p-1">
+                {[
+                  { key: "profile", label: "Profile" },
+                  { key: "feed", label: "Feed" },
+                  { key: "ai", label: "AI" },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    className={`rounded-full px-4 py-2 text-sm ${activeTab === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    onClick={() => setActiveTab(tab.key as typeof activeTab)}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="inline-flex rounded-full border border-border bg-muted p-1">
-              {[
-                { key: "profile", label: "Profile" },
-                { key: "feed", label: "Feed" },
-                { key: "ai", label: "AI" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  type="button"
-                  className={`rounded-full px-4 py-2 text-sm ${activeTab === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
-                  onClick={() => setActiveTab(tab.key as typeof activeTab)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <ScrollArea className="h-[calc(100vh-14rem)] px-5 pb-5">
-            {activeTab === "profile" && (
-              <div className="space-y-5 pb-2">
-                <p className="text-sm leading-6 text-muted-foreground">{selectedStakeholder.bio}</p>
-                <div className="grid gap-3">
-                  {selectedStakeholder.metrics.map((metric) => (
-                    <div key={metric.label} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                      <p className="mt-1 text-xl font-semibold text-foreground">{metric.value}</p>
-                    </div>
-                  ))}
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Interests</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {selectedStakeholder.interests.map((interest) => (
-                      <Badge key={interest} variant="secondary">{interest}</Badge>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">Initiatives</p>
-                  <div className="mt-3 space-y-2">
-                    {selectedStakeholder.initiatives.map((initiative) => (
-                      <div key={initiative} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
-                        {initiative}
+            <ScrollArea className="max-h-[30rem] xl:h-[calc(100vh-14rem)] xl:max-h-none px-5 pb-5">
+              {activeTab === "profile" && (
+                <div className="space-y-5 pb-2">
+                  <p className="text-sm leading-6 text-muted-foreground">{selectedStakeholder.bio}</p>
+                  <div className="grid gap-3">
+                    {selectedStakeholder.metrics.map((metric) => (
+                      <div key={metric.label} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
+                        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
+                        <p className="mt-1 text-xl font-semibold text-foreground">{metric.value}</p>
                       </div>
                     ))}
                   </div>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Interests</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selectedStakeholder.interests.map((interest) => (
+                        <Badge key={interest} variant="secondary">{interest}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Initiatives</p>
+                    <div className="mt-3 space-y-2">
+                      {selectedStakeholder.initiatives.map((initiative) => (
+                        <div key={initiative} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
+                          {initiative}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {activeTab === "feed" && (
-              <div className="space-y-3 pb-2">
-                {feed.map((post) => (
-                  <div key={post.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge>{post.category}</Badge>
-                      <p className="text-xs text-muted-foreground">{post.timestampLabel}</p>
+              {activeTab === "feed" && (
+                <div className="space-y-3 pb-2">
+                  {feed.map((post) => (
+                    <div key={post.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <Badge>{post.category}</Badge>
+                        <p className="text-xs text-muted-foreground">{post.timestampLabel}</p>
+                      </div>
+                      <p className="mt-3 font-medium text-foreground">{post.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.content}</p>
+                      <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
+                        <span>{post.likes} likes</span>
+                        <span>{post.comments} comments</span>
+                      </div>
                     </div>
-                    <p className="mt-3 font-medium text-foreground">{post.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.content}</p>
-                    <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
-                      <span>{post.likes} likes</span>
-                      <span>{post.comments} comments</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            {activeTab === "ai" && (
-              <div className="space-y-3 pb-2">
-                {insights.map((insight) => (
-                  <div key={insight.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge variant="secondary">{insight.kind}</Badge>
-                      <p className="text-xs text-primary">{insight.confidence}% confidence</p>
+              {activeTab === "ai" && (
+                <div className="space-y-3 pb-2">
+                  {insights.map((insight) => (
+                    <div key={insight.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <Badge variant="secondary">{insight.kind}</Badge>
+                        <p className="text-xs text-primary">{insight.confidence}% confidence</p>
+                      </div>
+                      <p className="mt-3 font-medium text-foreground">{insight.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{insight.description}</p>
                     </div>
-                    <p className="mt-3 font-medium text-foreground">{insight.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{insight.description}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
         </aside>
       </div>
     </main>
