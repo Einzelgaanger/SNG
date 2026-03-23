@@ -65,9 +65,9 @@ function GlobeObject({
   );
 
   const materialConfig = {
-    color: mode === "simple" ? "hsl(var(--secondary))" : undefined,
-    emissive: nightLights ? new THREE.Color("#ffb703") : new THREE.Color("#000000"),
-    emissiveIntensity: nightLights ? 0.15 : 0,
+    color: mode === "simple" ? "#1a1f2e" : undefined,
+    emissive: nightLights ? new THREE.Color("#34d399") : new THREE.Color("#000000"),
+    emissiveIntensity: nightLights ? 0.12 : 0,
     map: mode === "simple" ? null : mode === "satellite" || nightLights ? earthNight : earthDay,
     bumpMap: mode === "simple" ? null : bump,
     bumpScale: mode === "simple" ? 0 : 2.4,
