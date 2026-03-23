@@ -124,7 +124,7 @@ function GlobeObject({
 
 export function GlobeScene(props: GlobeSceneProps) {
   return (
-    <div className="h-full w-full rounded-[2rem] border border-border/70 bg-card/40 shadow-[0_25px_90px_hsl(var(--foreground)/0.18)] backdrop-blur-md">
+    <div className="h-full w-full overflow-hidden rounded-none">
       <Canvas camera={{ position: [0, 0, 260], fov: 38 }}>
         <color attach="background" args={["#07111f"]} />
         <fog attach="fog" args={["#07111f", 240, 420]} />
