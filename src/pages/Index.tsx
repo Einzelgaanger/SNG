@@ -466,13 +466,16 @@ function NetworkExperience() {
           layout
           className={`${navigatorOpen ? "fixed inset-0 z-40 bg-background/95 backdrop-blur-md xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none" : "hidden xl:hidden"} order-3 overflow-hidden p-0 xl:order-none xl:block ${navigatorOpen ? "xl:block" : ""}`}
         >
-          <div className="command-panel h-full overflow-hidden p-0">
+          <div className="command-panel mx-auto h-full max-w-md overflow-hidden p-0 xl:max-w-none">
             <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.26em] text-primary">Navigator</p>
                 <h2 className="text-lg font-semibold text-foreground">Stakeholders</h2>
               </div>
-              <Badge>{filteredStakeholders.length}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge>{filteredStakeholders.length}</Badge>
+                <button type="button" className="xl:hidden rounded-full p-2 text-muted-foreground hover:text-foreground" onClick={() => setNavigatorOpen(false)}>✕</button>
+              </div>
             </div>
             <div className="space-y-4 p-5">
               <div className="relative">
