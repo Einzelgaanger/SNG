@@ -5,9 +5,11 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import ResetPassword from "./pages/ResetPassword.tsx";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import AppPage from "./pages/Index";
+import ResetPassword from "./pages/ResetPassword";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +21,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/app" element={<AppPage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
