@@ -455,21 +455,27 @@ function NetworkExperience() {
   const feed = buildFeedPosts(selectedStakeholder);
   const insights = buildInsights(selectedStakeholder);
 
+  const [profileOpen, setProfileOpen] = useState(true);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-background px-3 py-3 sm:px-4 sm:py-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.16),transparent_24%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.14),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
       <div className="relative z-10 grid min-h-[calc(100vh-1.5rem)] gap-3 xl:grid-cols-[300px_minmax(0,1fr)_360px]">
+        {/* Navigator sidebar — overlay on mobile, inline on xl */}
         <motion.aside
           layout
-          className={`${navigatorOpen ? "block" : "hidden"} order-3 overflow-hidden p-0 xl:order-none xl:block`}
+          className={`${navigatorOpen ? "fixed inset-0 z-40 bg-background/95 backdrop-blur-md xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none" : "hidden xl:hidden"} order-3 overflow-hidden p-0 xl:order-none xl:block ${navigatorOpen ? "xl:block" : ""}`}
         >
-          <div className="command-panel h-full overflow-hidden p-0">
+          <div className="command-panel mx-auto h-full max-w-md overflow-hidden p-0 xl:max-w-none">
             <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.26em] text-primary">Navigator</p>
                 <h2 className="text-lg font-semibold text-foreground">Stakeholders</h2>
               </div>
-              <Badge>{filteredStakeholders.length}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge>{filteredStakeholders.length}</Badge>
+                <button type="button" className="xl:hidden rounded-full p-2 text-muted-foreground hover:text-foreground" onClick={() => setNavigatorOpen(false)}>✕</button>
+              </div>
             </div>
             <div className="space-y-4 p-5">
               <div className="relative">
@@ -535,6 +541,10 @@ function NetworkExperience() {
                   <LayoutPanelLeft className="h-4 w-4" />
                   Navigator
                 </Button>
+                <Button type="button" variant="secondary" size="sm" className="xl:hidden" onClick={() => setProfileOpen((current) => !current)}>
+                  <UserRound className="h-4 w-4" />
+                  Profile
+                </Button>
                 <Button type="button" variant="secondary" size="sm" onClick={() => signOut()}>
                   <LogOut className="h-4 w-4" />
                   Sign out
@@ -596,7 +606,7 @@ function NetworkExperience() {
           </div>
         </section>
 
-        <aside className="order-2 xl:order-none">
+        <aside className={`${profileOpen ? "block" : "hidden"} order-2 xl:order-none xl:block`}>
           <div className="command-panel h-full overflow-hidden p-0">
             <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
               <div>
