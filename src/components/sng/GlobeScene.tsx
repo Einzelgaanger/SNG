@@ -101,8 +101,8 @@ function GlobeObject({
             <mesh onClick={() => onSelect(stakeholder)}>
               <sphereGeometry args={[mode === "heatmap" ? 2.8 * scale : 1.9 * scale, 18, 18]} />
               <meshStandardMaterial
-                color={stakeholder.isViewer ? "#F7B731" : selected ? "#F97316" : mode === "heatmap" ? "#FB7185" : "#2DD4BF"}
-                emissive={stakeholder.isViewer ? "#F7B731" : selected ? "#F97316" : "#2DD4BF"}
+                color={stakeholder.isViewer ? "#34d399" : selected ? "#a78bfa" : mode === "heatmap" ? "#f472b6" : "#34d399"}
+                emissive={stakeholder.isViewer ? "#34d399" : selected ? "#a78bfa" : "#34d399"}
                 emissiveIntensity={selected ? 0.85 : 0.35}
                 transparent
                 opacity={mode === "heatmap" ? 0.66 : 0.95}
