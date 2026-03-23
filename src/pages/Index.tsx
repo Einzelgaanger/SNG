@@ -606,7 +606,7 @@ function NetworkExperience() {
           </div>
         </section>
 
-        <aside className="order-2 xl:order-none">
+        <aside className={`${profileOpen ? "block" : "hidden"} order-2 xl:order-none xl:block`}>
           <div className="command-panel h-full overflow-hidden p-0">
             <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
               <div>
