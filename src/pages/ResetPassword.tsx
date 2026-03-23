@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, KeyRound } from "lucide-react";
+import { ArrowRight, Globe2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,13 @@ const ResetPassword = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="fade-in w-full max-w-md">
-        <Card className="glass-panel-solid border-border/40">
+        <div className="mb-8 flex items-center justify-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10">
+            <Globe2 className="h-5 w-5 text-primary" />
+          </div>
+          <span className="text-sm font-semibold tracking-wide text-foreground">SNG</span>
+        </div>
+        <Card className="glass-panel-solid border-border/30">
           <CardHeader className="space-y-4 pb-2">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
               <KeyRound className="h-5 w-5" />
@@ -56,8 +62,8 @@ const ResetPassword = () => {
               <p className="text-sm text-muted-foreground">Open this page from the recovery email to continue.</p>
             ) : (
               <form className="space-y-4" onSubmit={handleSubmit}>
-                <Input type="password" placeholder="New password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <Input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                <Input type="password" placeholder="New password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 border-border/50 bg-card/50" />
+                <Input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="h-11 border-border/50 bg-card/50" />
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "Updating…" : "Update password"}
                   <ArrowRight className="ml-2 h-4 w-4" />
