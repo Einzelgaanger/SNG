@@ -20,11 +20,7 @@ interface InviteEmailProps {
   confirmationUrl: string
 }
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
+export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>You've been invited to join {siteName}</Preview>
@@ -33,18 +29,14 @@ export const InviteEmail = ({
         <Heading style={h1}>You've been invited</Heading>
         <Text style={text}>
           You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
+          <Link href={siteUrl} style={link}><strong>{siteName}</strong></Link>.
+          Click below to accept the invitation and create your account.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Accept Invitation
         </Button>
         <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+          If you weren't expecting this invitation, you can safely ignore this email.
         </Text>
       </Container>
     </Body>
@@ -53,27 +45,10 @@ export const InviteEmail = ({
 
 export default InviteEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', Arial, sans-serif" }
+const container = { padding: '40px 32px', maxWidth: '480px' as const }
+const h1 = { fontSize: '24px', fontWeight: 'bold' as const, color: '#0a0f1e', margin: '0 0 24px' }
+const text = { fontSize: '15px', color: '#4a5068', lineHeight: '1.6', margin: '0 0 24px' }
+const link = { color: '#d4940a', textDecoration: 'underline' }
+const button = { backgroundColor: '#d4940a', color: '#0a0f1e', fontSize: '15px', fontWeight: 'bold' as const, borderRadius: '10px', padding: '14px 28px', textDecoration: 'none' }
+const footer = { fontSize: '12px', color: '#8b8fa3', margin: '32px 0 0' }
