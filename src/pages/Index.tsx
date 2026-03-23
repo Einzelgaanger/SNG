@@ -2,18 +2,21 @@ import { useMemo, useState } from "react";
 import {
   ArrowRight,
   Building2,
+  Eye,
   Filter,
   Globe2,
+  Layers,
   LayoutPanelLeft,
   LogOut,
   MapPin,
+  Moon,
+  Network,
   Orbit,
   Search,
-  ShieldCheck,
-  Sparkles,
   UserRound,
+  X,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
 import { LoadingScreen } from "@/components/auth/LoadingScreen";
@@ -39,22 +42,26 @@ import {
 import { buildArcs, buildFeedPosts, buildInsights, buildStakeholders, interestCatalog, regionOptions } from "@/lib/mock-stakeholders";
 import type { StakeholderType, VisualMode } from "@/types/sng";
 
-const stakeholderTypeOptions: { value: StakeholderType; label: string; blurb: string }[] = [
-  { value: "entrepreneur", label: "Entrepreneur", blurb: "Operators building new ventures and pilots." },
-  { value: "university", label: "University", blurb: "Research institutions translating ideas into deployment." },
-  { value: "investor", label: "Investor", blurb: "Capital allocators seeking high-fit partnerships." },
-  { value: "government", label: "Government", blurb: "Public institutions shaping market conditions." },
-  { value: "corporate", label: "Corporate", blurb: "Enterprises connecting scale with strategic execution." },
-  { value: "nonprofit", label: "Nonprofit", blurb: "Mission-led ecosystem builders and conveners." },
-  { value: "other", label: "Other", blurb: "A broader network participant with a unique role." },
+/* ─── Constants ───────────────────────────────────────────── */
+
+const stakeholderTypes: { value: StakeholderType; label: string; desc: string }[] = [
+  { value: "entrepreneur", label: "Entrepreneur", desc: "Building new ventures" },
+  { value: "university", label: "University", desc: "Research & academia" },
+  { value: "investor", label: "Investor", desc: "Allocating capital" },
+  { value: "government", label: "Government", desc: "Public institutions" },
+  { value: "corporate", label: "Corporate", desc: "Enterprise scale" },
+  { value: "nonprofit", label: "Nonprofit", desc: "Mission-driven" },
+  { value: "other", label: "Other", desc: "Broader ecosystem" },
 ];
 
 const visualModes: { value: VisualMode; label: string }[] = [
   { value: "enhanced", label: "Enhanced" },
-  { value: "heatmap", label: "Heat map" },
-  { value: "simple", label: "Simple points" },
+  { value: "heatmap", label: "Heatmap" },
+  { value: "simple", label: "Simple" },
   { value: "satellite", label: "Satellite" },
 ];
+
+/* ─── Auth ────────────────────────────────────────────────── */
 
 function AuthExperience() {
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
@@ -63,48 +70,35 @@ function AuthExperience() {
   const [displayName, setDisplayName] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleEmailAuth = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleEmailAuth = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       setSubmitting(true);
       if (mode === "signin") {
-        const parsed = signInSchema.safeParse({ email, password });
-        if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Invalid credentials");
-        const { error } = await supabase.auth.signInWithPassword({
-          email: parsed.data.email,
-          password: parsed.data.password,
-        });
+        const p = signInSchema.safeParse({ email, password });
+        if (!p.success) throw new Error(p.error.issues[0]?.message);
+        const { error } = await supabase.auth.signInWithPassword({ email: p.data.email, password: p.data.password });
         if (error) throw error;
-        toast.success("Signed in successfully.");
-      }
-
-      if (mode === "signup") {
-        const parsed = signUpSchema.safeParse({ email, password, displayName });
-        if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Check your details");
+        toast.success("Signed in.");
+      } else if (mode === "signup") {
+        const p = signUpSchema.safeParse({ email, password, displayName });
+        if (!p.success) throw new Error(p.error.issues[0]?.message);
         const { error } = await supabase.auth.signUp({
-          email: parsed.data.email,
-          password: parsed.data.password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: { display_name: parsed.data.displayName },
-          },
+          email: p.data.email,
+          password: p.data.password,
+          options: { emailRedirectTo: window.location.origin, data: { display_name: p.data.displayName } },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your account.");
-      }
-
-      if (mode === "forgot") {
-        const parsed = forgotPasswordSchema.safeParse({ email });
-        if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Enter a valid email");
-        const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
+      } else {
+        const p = forgotPasswordSchema.safeParse({ email });
+        if (!p.success) throw new Error(p.error.issues[0]?.message);
+        const { error } = await supabase.auth.resetPasswordForEmail(p.data.email, { redirectTo: `${window.location.origin}/reset-password` });
         if (error) throw error;
-        toast.success("Password recovery email sent.");
+        toast.success("Recovery email sent.");
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Authentication failed");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
       setSubmitting(false);
     }
@@ -115,109 +109,119 @@ function AuthExperience() {
       setSubmitting(true);
       const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
       if ((result as { error?: Error }).error) throw (result as { error: Error }).error;
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : `Could not continue with ${provider}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : `Could not continue with ${provider}`);
       setSubmitting(false);
     }
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 sm:py-8">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.22),transparent_30%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.18),transparent_30%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-7xl items-start gap-5 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8">
-        <Card className="order-1 border-border/70 bg-card/88 shadow-[0_28px_90px_hsl(var(--foreground)/0.16)] backdrop-blur-xl lg:order-2">
-          <CardHeader className="space-y-4">
-            <div className="inline-flex w-full rounded-full border border-border bg-muted p-1">
-              {[
-                { key: "signin", label: "Sign in" },
-                { key: "signup", label: "Create account" },
-                { key: "forgot", label: "Reset" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  type="button"
-                  className={`flex-1 rounded-full px-3 py-2 text-sm transition sm:px-4 ${mode === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
-                  onClick={() => setMode(tab.key as typeof mode)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <div>
-              <CardTitle>{mode === "signin" ? "Access your network" : mode === "signup" ? "Create your stakeholder account" : "Recover your password"}</CardTitle>
-              <CardDescription>
-                {mode === "signin"
-                  ? "Use email/password or continue with a managed provider."
-                  : mode === "signup"
-                    ? "Email verification is enabled for production-ready onboarding."
-                    : "We’ll email you a secure password reset link."}
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <form className="space-y-4" onSubmit={handleEmailAuth}>
-              {mode === "signup" && <Input placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />}
-              <Input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-              {mode !== "forgot" && <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />}
-              <Button type="submit" className="w-full" disabled={submitting}>
-                {submitting ? "Working..." : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </form>
-
-            <div className="relative py-2 text-center text-xs uppercase tracking-[0.24em] text-muted-foreground">
-              <span className="relative z-10 bg-card px-3">or continue with</span>
-              <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Button type="button" variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("google")}>
-                Google
-              </Button>
-              <Button type="button" variant="secondary" className="w-full" disabled={submitting} onClick={() => handleOAuth("apple")}>
-                Apple
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <section className="order-2 space-y-5 lg:order-1 lg:space-y-8">
-          <Badge className="rounded-full px-4 py-1 text-[11px] uppercase tracking-[0.28em]">Stakeholder Network Globe</Badge>
-          <div className="space-y-4 lg:space-y-5">
-            <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl lg:text-6xl">
-              A production-ready stakeholder command center built around a living globe.
-            </h1>
-            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Onboard users, authenticate securely, map global relationships, and drill into profiles, feed activity, and collaboration signals from one unified experience.
-            </p>
+    <div className="flex min-h-screen bg-background">
+      {/* Left — hero */}
+      <div className="hidden flex-1 items-center justify-center bg-muted/40 px-12 lg:flex">
+        <div className="fade-in max-w-lg space-y-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.25em] text-primary">
+            <Globe2 className="h-3.5 w-3.5" /> Stakeholder Network Globe
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <h1 className="text-5xl leading-[1.1] text-foreground xl:text-6xl">
+            Map your global <br />
+            <span className="text-gradient">innovation network.</span>
+          </h1>
+          <p className="max-w-md text-lg leading-relaxed text-muted-foreground">
+            Onboard, explore stakeholders on an interactive globe, discover collaboration signals, and build partnerships — all from one unified experience.
+          </p>
+          <div className="grid grid-cols-3 gap-4 pt-4">
             {[
-              { icon: Globe2, title: "Geographic network", text: "Interactive world view with relationship arcs and exploration modes." },
-              { icon: ShieldCheck, title: "Verified auth", text: "Email verification, password recovery, and Google/Apple sign-in are ready." },
-              { icon: Sparkles, title: "Command-center UX", text: "Navigator, overlays, onboarding, and profile intelligence in one route." },
-            ].map((item) => (
-              <div key={item.title} className="command-panel space-y-3 p-5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
-                </div>
+              { icon: Globe2, label: "Globe view", sub: "Geographic network" },
+              { icon: Network, label: "Connections", sub: "Relationship arcs" },
+              { icon: Layers, label: "Intelligence", sub: "AI-powered signals" },
+            ].map((f) => (
+              <div key={f.label} className="glass-panel p-4">
+                <f.icon className="mb-2 h-5 w-5 text-primary" />
+                <p className="text-sm font-medium text-foreground">{f.label}</p>
+                <p className="text-xs text-muted-foreground">{f.sub}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
       </div>
-    </main>
+
+      {/* Right — auth form */}
+      <div className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="fade-in w-full max-w-sm space-y-8">
+          <div className="space-y-2 text-center lg:text-left">
+            <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary">SNG</p>
+            <h2 className="text-3xl text-foreground">
+              {mode === "signin" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {mode === "signin"
+                ? "Sign in to access your stakeholder network."
+                : mode === "signup"
+                  ? "Set up your account to join the network."
+                  : "We'll send you a recovery link."}
+            </p>
+          </div>
+
+          <form className="space-y-3" onSubmit={handleEmailAuth}>
+            {mode === "signup" && (
+              <Input placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-11 bg-muted/50" />
+            )}
+            <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11 bg-muted/50" />
+            {mode !== "forgot" && (
+              <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 bg-muted/50" />
+            )}
+            <Button type="submit" className="h-11 w-full" disabled={submitting}>
+              {submitting ? "Working…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send recovery link"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </form>
+
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs text-muted-foreground">or</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Button type="button" variant="outline" className="h-11" disabled={submitting} onClick={() => handleOAuth("google")}>
+              Google
+            </Button>
+            <Button type="button" variant="outline" className="h-11" disabled={submitting} onClick={() => handleOAuth("apple")}>
+              Apple
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-center gap-4 text-sm">
+            {mode !== "signin" && (
+              <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => setMode("signin")}>
+                Sign in
+              </button>
+            )}
+            {mode !== "signup" && (
+              <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => setMode("signup")}>
+                Create account
+              </button>
+            )}
+            {mode !== "forgot" && (
+              <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => setMode("forgot")}>
+                Forgot password?
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+/* ─── Onboarding ──────────────────────────────────────────── */
 
 function OnboardingExperience() {
   const { user } = useAuth();
   const { data: profile, updateProfile, isSaving } = useProfile(user?.id);
   const [step, setStep] = useState(1);
+  const totalSteps = 5;
+
   const [form, setForm] = useState<OnboardingValues>({
     stakeholderType: profile?.stakeholder_type || "entrepreneur",
     displayName: profile?.display_name || "",
@@ -228,24 +232,20 @@ function OnboardingExperience() {
     fundingUsd: String((profile?.impact_metrics as Record<string, string | number | undefined> | undefined)?.fundingUsd || ""),
     peopleReached: String((profile?.impact_metrics as Record<string, string | number | undefined> | undefined)?.peopleReached || ""),
     annualBudget: String((profile?.impact_metrics as Record<string, string | number | undefined> | undefined)?.annualBudget || ""),
-    interests: profile?.interests || ["Climate", "AI"],
-    initiatives: profile?.initiatives || ["Partnership discovery"],
+    interests: profile?.interests || [],
+    initiatives: profile?.initiatives || [],
   });
 
   const next = () => {
-    if (step === 1 && !form.stakeholderType) return toast.error("Select your stakeholder type");
-    if (step === 2 && (!form.displayName.trim() || !form.organizationName.trim())) return toast.error("Add your name and organization");
-    if (step === 3 && !form.region) return toast.error("Choose your region");
-    setStep((current) => Math.min(current + 1, 5));
+    if (step === 1 && !form.stakeholderType) return toast.error("Select your role");
+    if (step === 2 && (!form.displayName.trim() || !form.organizationName.trim())) return toast.error("Name and organization are required");
+    if (step === 3 && !form.region) return toast.error("Choose a region");
+    setStep((s) => Math.min(s + 1, totalSteps));
   };
 
   const complete = async () => {
     const parsed = onboardingSchema.safeParse(form);
-    if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message || "Check your onboarding details");
-      return;
-    }
-
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message || "Check your details"); return; }
     try {
       await updateProfile({
         display_name: parsed.data.displayName,
@@ -263,478 +263,473 @@ function OnboardingExperience() {
         },
         onboarding_completed: true,
       });
-      toast.success("Onboarding complete.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save onboarding");
+      toast.success("Welcome to SNG.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not save profile");
     }
   };
 
+  const stepLabels = ["Role", "Identity", "Location", "Impact", "Interests"];
+
   return (
-    <main className="relative min-h-screen overflow-hidden px-6 py-8">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsla(var(--primary),0.2),transparent_24%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.18),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="command-panel flex flex-col justify-between p-6 sm:p-8">
-          <div className="space-y-4">
-            <Badge className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.28em]">Onboarding</Badge>
-            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-foreground">Join the network as a first-class node.</h1>
-            <p className="text-muted-foreground">Your profile becomes the authenticated foundation for discovery, personalization, and future collaboration workflows.</p>
+    <div className="flex min-h-screen bg-background">
+      {/* Left sidebar — progress */}
+      <div className="hidden w-80 flex-col justify-between border-r border-border/60 bg-muted/30 p-8 lg:flex">
+        <div className="space-y-6">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary">SNG</p>
+            <h1 className="mt-2 text-3xl text-foreground">Set up your profile</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Complete these steps to join the stakeholder network.</p>
           </div>
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div key={item} className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full border ${item <= step ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
-                  {item}
+          <div className="space-y-1">
+            {stepLabels.map((label, i) => {
+              const n = i + 1;
+              const active = n === step;
+              const done = n < step;
+              return (
+                <div key={label} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${active ? "bg-primary/10" : ""}`}>
+                  <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium ${done ? "bg-primary text-primary-foreground" : active ? "border border-primary text-primary" : "border border-border text-muted-foreground"}`}>
+                    {done ? "✓" : n}
+                  </div>
+                  <span className={`text-sm ${active ? "font-medium text-foreground" : "text-muted-foreground"}`}>{label}</span>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">Step {item}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {[
-                      "Stakeholder type",
-                      "Identity & organization",
-                      "Geographic anchor",
-                      "Impact signals",
-                      "Interests & initiatives",
-                    ][item - 1]}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
+        <p className="text-xs text-muted-foreground">Step {step} of {totalSteps}</p>
+      </div>
 
-        <Card className="border-border/70 bg-card/92 shadow-[0_28px_90px_hsl(var(--foreground)/0.14)] backdrop-blur-xl">
-          <CardHeader>
-            <CardTitle>Step {step} of 5</CardTitle>
-            <CardDescription>We keep this to the minimum needed for a strong production profile.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {step === 1 && (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {stakeholderTypeOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`rounded-3xl border p-4 text-left transition ${form.stakeholderType === option.value ? "border-primary bg-primary/10" : "border-border bg-background/60"}`}
-                    onClick={() => setForm((current) => ({ ...current, stakeholderType: option.value }))}
-                  >
-                    <p className="font-medium text-foreground">{option.label}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{option.blurb}</p>
-                  </button>
-                ))}
-              </div>
-            )}
+      {/* Right — form */}
+      <div className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="fade-in w-full max-w-lg space-y-8">
+          {/* Mobile progress */}
+          <div className="flex items-center gap-2 lg:hidden">
+            {stepLabels.map((_, i) => (
+              <div key={i} className={`h-1 flex-1 rounded-full ${i + 1 <= step ? "bg-primary" : "bg-border"}`} />
+            ))}
+          </div>
 
-            {step === 2 && (
-              <div className="grid gap-4">
-                <Input placeholder="Your name" value={form.displayName} onChange={(e) => setForm((current) => ({ ...current, displayName: e.target.value }))} />
-                <Input
-                  placeholder="Organization"
-                  value={form.organizationName}
-                  onChange={(e) => setForm((current) => ({ ...current, organizationName: e.target.value }))}
-                />
-                <Textarea placeholder="Short bio (optional)" value={form.bio} onChange={(e) => setForm((current) => ({ ...current, bio: e.target.value }))} />
-              </div>
-            )}
+          <div>
+            <h2 className="text-2xl text-foreground">{stepLabels[step - 1]}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {step === 1 && "What best describes your role in the ecosystem?"}
+              {step === 2 && "Tell us who you are."}
+              {step === 3 && "Where are you based?"}
+              {step === 4 && "Optional impact metrics for your profile."}
+              {step === 5 && "Select your focus areas."}
+            </p>
+          </div>
 
-            {step === 3 && (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {regionOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`rounded-3xl border p-4 text-left transition ${form.region === option.value ? "border-primary bg-primary/10" : "border-border bg-background/60"}`}
-                    onClick={() => setForm((current) => ({ ...current, region: option.value, city: option.city }))}
-                  >
-                    <p className="font-medium text-foreground">{option.label}</p>
-                    <p className="text-sm text-muted-foreground">Anchor city: {option.city}</p>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {step === 4 && (
-              <div className="grid gap-4 sm:grid-cols-3">
-                <Input placeholder="Funding (USD)" value={form.fundingUsd} onChange={(e) => setForm((current) => ({ ...current, fundingUsd: e.target.value }))} />
-                <Input placeholder="People reached" value={form.peopleReached} onChange={(e) => setForm((current) => ({ ...current, peopleReached: e.target.value }))} />
-                <Input placeholder="Annual budget" value={form.annualBudget} onChange={(e) => setForm((current) => ({ ...current, annualBudget: e.target.value }))} />
-              </div>
-            )}
-
-            {step === 5 && (
-              <div className="space-y-5">
-                <div>
-                  <p className="mb-3 text-sm font-medium text-foreground">Interests</p>
-                  <div className="flex flex-wrap gap-2">
-                    {interestCatalog.map((interest) => {
-                      const selected = form.interests.includes(interest);
-                      return (
-                        <button
-                          key={interest}
-                          type="button"
-                          className={`rounded-full border px-4 py-2 text-sm transition ${selected ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
-                          onClick={() =>
-                            setForm((current) => ({
-                              ...current,
-                              interests: selected
-                                ? current.interests.filter((item) => item !== interest)
-                                : [...current.interests.slice(0, 5), interest],
-                            }))
-                          }
-                        >
-                          {interest}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {[0, 1].map((index) => (
-                    <Input
-                      key={index}
-                      placeholder={`Initiative ${index + 1}`}
-                      value={form.initiatives[index] || ""}
-                      onChange={(e) => {
-                        const initiatives = [...form.initiatives];
-                        initiatives[index] = e.target.value;
-                        setForm((current) => ({ ...current, initiatives: initiatives.filter(Boolean) }));
-                      }}
-                    />
+          <AnimatePresence mode="wait">
+            <motion.div key={step} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }}>
+              {step === 1 && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {stakeholderTypes.map((t) => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      className={`rounded-xl border p-4 text-left transition ${form.stakeholderType === t.value ? "border-primary bg-primary/5 glow-ring" : "border-border hover:border-muted-foreground/30"}`}
+                      onClick={() => setForm((f) => ({ ...f, stakeholderType: t.value }))}
+                    >
+                      <p className="text-sm font-medium text-foreground">{t.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{t.desc}</p>
+                    </button>
                   ))}
                 </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between gap-3">
-              <Button type="button" variant="ghost" onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || isSaving}>
-                Back
-              </Button>
-              {step < 5 ? (
-                <Button type="button" onClick={next}>Continue</Button>
-              ) : (
-                <Button type="button" onClick={complete} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Enter SNG"}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
               )}
-            </div>
-          </CardContent>
-        </Card>
+
+              {step === 2 && (
+                <div className="space-y-3">
+                  <Input placeholder="Your name" value={form.displayName} onChange={(e) => setForm((f) => ({ ...f, displayName: e.target.value }))} className="h-11 bg-muted/50" />
+                  <Input placeholder="Organization" value={form.organizationName} onChange={(e) => setForm((f) => ({ ...f, organizationName: e.target.value }))} className="h-11 bg-muted/50" />
+                  <Textarea placeholder="Short bio (optional)" rows={3} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} className="bg-muted/50" />
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {regionOptions.map((r) => (
+                    <button
+                      key={r.value}
+                      type="button"
+                      className={`rounded-xl border p-4 text-left transition ${form.region === r.value ? "border-primary bg-primary/5 glow-ring" : "border-border hover:border-muted-foreground/30"}`}
+                      onClick={() => setForm((f) => ({ ...f, region: r.value, city: r.city }))}
+                    >
+                      <p className="text-sm font-medium text-foreground">{r.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{r.city}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {step === 4 && (
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <Input placeholder="Funding (USD)" value={form.fundingUsd} onChange={(e) => setForm((f) => ({ ...f, fundingUsd: e.target.value }))} className="h-11 bg-muted/50" />
+                  <Input placeholder="People reached" value={form.peopleReached} onChange={(e) => setForm((f) => ({ ...f, peopleReached: e.target.value }))} className="h-11 bg-muted/50" />
+                  <Input placeholder="Annual budget" value={form.annualBudget} onChange={(e) => setForm((f) => ({ ...f, annualBudget: e.target.value }))} className="h-11 bg-muted/50" />
+                </div>
+              )}
+
+              {step === 5 && (
+                <div className="space-y-6">
+                  <div>
+                    <p className="mb-3 text-sm font-medium text-foreground">Interests</p>
+                    <div className="flex flex-wrap gap-2">
+                      {interestCatalog.map((interest) => {
+                        const sel = form.interests.includes(interest);
+                        return (
+                          <button
+                            key={interest}
+                            type="button"
+                            className={`rounded-full border px-3.5 py-1.5 text-sm transition ${sel ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-muted-foreground/40"}`}
+                            onClick={() => setForm((f) => ({ ...f, interests: sel ? f.interests.filter((i) => i !== interest) : [...f.interests.slice(0, 5), interest] }))}
+                          >
+                            {interest}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[0, 1].map((idx) => (
+                      <Input
+                        key={idx}
+                        placeholder={`Initiative ${idx + 1}`}
+                        value={form.initiatives[idx] || ""}
+                        className="h-11 bg-muted/50"
+                        onChange={(e) => {
+                          const initiatives = [...form.initiatives];
+                          initiatives[idx] = e.target.value;
+                          setForm((f) => ({ ...f, initiatives: initiatives.filter(Boolean) }));
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setStep((s) => Math.max(1, s - 1))} disabled={step === 1 || isSaving}>
+              Back
+            </Button>
+            {step < totalSteps ? (
+              <Button type="button" size="sm" onClick={next}>
+                Continue <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button type="button" size="sm" onClick={complete} disabled={isSaving}>
+                {isSaving ? "Saving…" : "Enter SNG"} <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
+
+/* ─── Network (Globe) ─────────────────────────────────────── */
 
 function NetworkExperience() {
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
   const [showConnections, setShowConnections] = useState(true);
   const [showCountries, setShowCountries] = useState(true);
   const [autoRotate, setAutoRotate] = useState(true);
   const [nightLights, setNightLights] = useState(false);
-  const [navigatorOpen, setNavigatorOpen] = useState(() => (typeof window !== "undefined" ? window.innerWidth >= 1280 : true));
+  const [navigatorOpen, setNavigatorOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "feed" | "ai">("profile");
-  const [selectedId, setSelectedId] = useState<string | null>("viewer-profile");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const stakeholders = useMemo(() => buildStakeholders(profile ?? null), [profile]);
   const arcs = useMemo(() => buildArcs(stakeholders), [stakeholders]);
+
   const filteredStakeholders = useMemo(
     () =>
-      stakeholders.filter((stakeholder) => {
-        const matchesType = typeFilter === "all" || stakeholder.type === typeFilter;
-        const haystack = `${stakeholder.name} ${stakeholder.organization} ${stakeholder.region}`.toLowerCase();
-        const matchesSearch = haystack.includes(search.toLowerCase());
-        return matchesType && matchesSearch;
+      stakeholders.filter((s) => {
+        if (typeFilter !== "all" && s.type !== typeFilter) return false;
+        if (!search) return true;
+        return `${s.name} ${s.organization} ${s.region}`.toLowerCase().includes(search.toLowerCase());
       }),
     [search, stakeholders, typeFilter],
   );
 
-  const selectedStakeholder = stakeholders.find((stakeholder) => stakeholder.id === selectedId) || filteredStakeholders[0] || stakeholders[0];
-  const feed = buildFeedPosts(selectedStakeholder);
-  const insights = buildInsights(selectedStakeholder);
-
-  const [profileOpen, setProfileOpen] = useState(true);
+  const selected = stakeholders.find((s) => s.id === selectedId) || stakeholders[0] || null;
+  const feed = selected ? buildFeedPosts(selected) : [];
+  const insights = selected ? buildInsights(selected) : [];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background px-3 py-3 sm:px-4 sm:py-4">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsla(var(--primary),0.16),transparent_24%),radial-gradient(circle_at_bottom_right,hsla(var(--accent),0.14),transparent_28%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)))]" />
-      <div className="relative z-10 grid min-h-[calc(100vh-1.5rem)] gap-3 xl:grid-cols-[300px_minmax(0,1fr)_360px]">
-        {/* Navigator sidebar — overlay on mobile, inline on xl */}
-        <motion.aside
-          layout
-          className={`${navigatorOpen ? "fixed inset-0 z-40 bg-background/95 backdrop-blur-md xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none" : "hidden xl:hidden"} order-3 overflow-hidden p-0 xl:order-none xl:block ${navigatorOpen ? "xl:block" : ""}`}
-        >
-          <div className="command-panel mx-auto h-full max-w-md overflow-hidden p-0 xl:max-w-none">
-            <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.26em] text-primary">Navigator</p>
-                <h2 className="text-lg font-semibold text-foreground">Stakeholders</h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge>{filteredStakeholders.length}</Badge>
-                <button type="button" className="xl:hidden rounded-full p-2 text-muted-foreground hover:text-foreground" onClick={() => setNavigatorOpen(false)}>✕</button>
-              </div>
-            </div>
-            <div className="space-y-4 p-5">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input className="pl-9" placeholder="Search people, orgs, regions" value={search} onChange={(e) => setSearch(e.target.value)} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {["all", ...stakeholderTypeOptions.map((item) => item.value)].map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.2em] ${typeFilter === option ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}
-                    onClick={() => setTypeFilter(option)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <ScrollArea className="max-h-[24rem] xl:h-[calc(100vh-17rem)] xl:max-h-none px-3 pb-4">
-              <div className="space-y-2 px-2">
-                {filteredStakeholders.map((stakeholder) => (
-                  <button
-                    key={stakeholder.id}
-                    type="button"
-                    className={`w-full rounded-3xl border p-4 text-left transition ${selectedStakeholder.id === stakeholder.id ? "border-primary bg-primary/10" : "border-border bg-background/55 hover:bg-background"}`}
-                    onClick={() => {
-                      setSelectedId(stakeholder.id);
-                      setNavigatorOpen(false);
-                    }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-foreground">{stakeholder.name}</p>
-                        <p className="text-sm text-muted-foreground">{stakeholder.organization}</p>
-                      </div>
-                      <Badge variant="secondary">{stakeholder.type}</Badge>
-                    </div>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {stakeholder.city}, {stakeholder.country}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
+    <div className="relative flex h-screen flex-col overflow-hidden bg-background">
+      {/* Top bar */}
+      <header className="relative z-20 flex items-center justify-between border-b border-border/50 px-4 py-2.5">
+        <div className="flex items-center gap-4">
+          <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary">SNG</p>
+          <Separator orientation="vertical" className="h-5" />
+          <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
+            <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
+            <span>·</span>
+            <span>{arcs.length} connection{arcs.length !== 1 ? "s" : ""}</span>
           </div>
-        </motion.aside>
+        </div>
+        <div className="flex items-center gap-2">
+          {visualModes.map((m) => (
+            <button
+              key={m.value}
+              type="button"
+              className={`hidden rounded-lg px-2.5 py-1.5 text-xs transition sm:block ${visualMode === m.value ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              onClick={() => setVisualMode(m.value)}
+            >
+              {m.label}
+            </button>
+          ))}
+          <Separator orientation="vertical" className="mx-1 h-5" />
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setNavigatorOpen((v) => !v)}>
+            <LayoutPanelLeft className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => { if (selected) setProfileOpen((v) => !v); }}>
+            <UserRound className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={() => signOut()}>
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
 
-        <section className="order-1 flex min-h-[70vh] flex-col gap-3 overflow-hidden xl:order-none">
-          <div className="command-panel flex flex-col gap-3 p-3">
-            <header className="grid gap-3 xl:grid-cols-[1fr_auto]">
-              <div className="rounded-[1.5rem] border border-border/70 bg-background/60 px-4 py-3 backdrop-blur-sm">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Badge className="rounded-full px-3 py-1 uppercase tracking-[0.22em]">SNG</Badge>
-                  <span className="text-sm text-muted-foreground">{stakeholders.length} global nodes</span>
-                  <span className="text-sm text-muted-foreground">{arcs.length} active relationships</span>
-                  <span className="text-sm text-muted-foreground">Mode: {visualMode}</span>
+      <div className="relative flex flex-1 overflow-hidden">
+        {/* Navigator panel */}
+        <AnimatePresence>
+          {navigatorOpen && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 320, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ type: "spring", damping: 26, stiffness: 260 }}
+              className="relative z-10 shrink-0 overflow-hidden border-r border-border/50"
+            >
+              <div className="flex h-full w-[320px] flex-col bg-card/80 backdrop-blur-md">
+                <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
+                  <p className="text-sm font-medium text-foreground">Navigator</p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">{filteredStakeholders.length}</Badge>
+                    <button type="button" onClick={() => setNavigatorOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-wrap justify-end gap-2">
-                <Button type="button" variant="secondary" size="sm" onClick={() => setNavigatorOpen((current) => !current)}>
-                  <LayoutPanelLeft className="h-4 w-4" />
-                  Navigator
-                </Button>
-                <Button type="button" variant="secondary" size="sm" className="xl:hidden" onClick={() => setProfileOpen((current) => !current)}>
-                  <UserRound className="h-4 w-4" />
-                  Profile
-                </Button>
-                <Button type="button" variant="secondary" size="sm" onClick={() => signOut()}>
-                  <LogOut className="h-4 w-4" />
-                  Sign out
-                </Button>
-              </div>
-            </header>
-
-            <div className="relative flex-1 min-h-[32rem]">
-              <div className="mb-3 flex flex-wrap gap-2 xl:absolute xl:left-4 xl:top-4 xl:z-10 xl:mb-0 xl:max-w-[420px]">
-                {visualModes.map((mode) => (
-                  <button
-                    key={mode.value}
-                    type="button"
-                    className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.22em] backdrop-blur-sm ${visualMode === mode.value ? "border-primary bg-background/95 text-foreground" : "border-border bg-background/60 text-muted-foreground"}`}
-                    onClick={() => setVisualMode(mode.value)}
-                  >
-                    {mode.label}
-                  </button>
-                ))}
-              </div>
-
-              <GlobeScene
-                arcs={arcs}
-                autoRotate={autoRotate}
-                mode={visualMode}
-                nightLights={nightLights}
-                selectedId={selectedStakeholder.id}
-                showConnections={showConnections}
-                showCountries={showCountries}
-                stakeholders={filteredStakeholders}
-                onSelect={(stakeholder) => setSelectedId(stakeholder.id)}
-              />
-
-              <div className="mt-3 grid gap-3 md:grid-cols-2 xl:absolute xl:bottom-4 xl:left-4 xl:right-4 xl:mt-0 xl:grid-cols-5">
-                {[
-                  { label: "Auto rotate", value: autoRotate, setValue: setAutoRotate, icon: Orbit },
-                  { label: "Connections", value: showConnections, setValue: setShowConnections, icon: Sparkles },
-                  { label: "Country grid", value: showCountries, setValue: setShowCountries, icon: Globe2 },
-                  { label: "Night lights", value: nightLights, setValue: setNightLights, icon: ShieldCheck },
-                  { label: "Clear filter", value: typeFilter !== "all", setValue: () => setTypeFilter("all"), icon: Filter },
-                ].map((toggle) => (
-                  <button
-                    key={toggle.label}
-                    type="button"
-                    className={`rounded-[1.25rem] border px-4 py-3 text-left backdrop-blur-md ${toggle.value ? "border-primary bg-background/92" : "border-border bg-background/58"}`}
-                    onClick={() => toggle.setValue(typeof toggle.value === "boolean" ? !toggle.value : false)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <toggle.icon className="h-4 w-4 text-primary" />
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{toggle.label}</p>
-                        <p className="text-xs text-muted-foreground">{toggle.value ? "Enabled" : "Disabled"}</p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <aside className={`${profileOpen ? "block" : "hidden"} order-2 xl:order-none xl:block`}>
-          <div className="command-panel h-full overflow-hidden p-0">
-            <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-primary">Selected node</p>
-                <h2 className="text-lg font-semibold text-foreground">{selectedStakeholder.name}</h2>
-              </div>
-              <Badge variant="secondary">{selectedStakeholder.type}</Badge>
-            </div>
-
-            <div className="space-y-4 px-5 py-4">
-              <div className="rounded-[1.5rem] border border-border/70 bg-background/60 p-4">
-                <p className="text-sm font-medium text-foreground">{selectedStakeholder.organization}</p>
-                <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{selectedStakeholder.city}, {selectedStakeholder.country}</span>
-                  <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{selectedStakeholder.region}</span>
-                  <span className="inline-flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Score {selectedStakeholder.score}</span>
-                </div>
-              </div>
-
-              <div className="inline-flex rounded-full border border-border bg-muted p-1">
-                {[
-                  { key: "profile", label: "Profile" },
-                  { key: "feed", label: "Feed" },
-                  { key: "ai", label: "AI" },
-                ].map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    className={`rounded-full px-4 py-2 text-sm ${activeTab === tab.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
-                    onClick={() => setActiveTab(tab.key as typeof activeTab)}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <ScrollArea className="max-h-[30rem] xl:h-[calc(100vh-14rem)] xl:max-h-none px-5 pb-5">
-              {activeTab === "profile" && (
-                <div className="space-y-5 pb-2">
-                  <p className="text-sm leading-6 text-muted-foreground">{selectedStakeholder.bio}</p>
-                  <div className="grid gap-3">
-                    {selectedStakeholder.metrics.map((metric) => (
-                      <div key={metric.label} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                        <p className="mt-1 text-xl font-semibold text-foreground">{metric.value}</p>
-                      </div>
+                <div className="space-y-3 p-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                    <Input className="h-9 bg-muted/50 pl-9 text-sm" placeholder="Search…" value={search} onChange={(e) => setSearch(e.target.value)} />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["all", ...stakeholderTypes.map((t) => t.value)].map((v) => (
+                      <button key={v} type="button" className={`rounded-md px-2 py-1 text-[11px] uppercase tracking-wider transition ${typeFilter === v ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`} onClick={() => setTypeFilter(v)}>
+                        {v}
+                      </button>
                     ))}
                   </div>
-                  <Separator />
+                </div>
+                <ScrollArea className="flex-1 px-3 pb-4">
+                  {filteredStakeholders.length === 0 && (
+                    <p className="px-2 py-8 text-center text-sm text-muted-foreground">No stakeholders yet. Complete onboarding to appear on the globe.</p>
+                  )}
+                  {filteredStakeholders.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      className={`mb-1.5 w-full rounded-xl border p-3 text-left transition ${selected?.id === s.id ? "border-primary/40 bg-primary/5" : "border-transparent hover:bg-muted/50"}`}
+                      onClick={() => { setSelectedId(s.id); setProfileOpen(true); setNavigatorOpen(false); }}
+                    >
+                      <p className="text-sm font-medium text-foreground">{s.name}</p>
+                      <p className="text-xs text-muted-foreground">{s.organization}</p>
+                      <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <MapPin className="h-3 w-3" /> {s.city}, {s.country}
+                      </div>
+                    </button>
+                  ))}
+                </ScrollArea>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        {/* Globe */}
+        <div className="relative flex-1">
+          <GlobeScene
+            arcs={arcs}
+            autoRotate={autoRotate}
+            mode={visualMode}
+            nightLights={nightLights}
+            selectedId={selected?.id ?? null}
+            showConnections={showConnections}
+            showCountries={showCountries}
+            stakeholders={filteredStakeholders}
+            onSelect={(s) => { setSelectedId(s.id); setProfileOpen(true); }}
+          />
+
+          {/* Bottom controls */}
+          <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-center gap-2">
+            {[
+              { label: "Rotate", icon: Orbit, active: autoRotate, toggle: () => setAutoRotate((v) => !v) },
+              { label: "Arcs", icon: Network, active: showConnections, toggle: () => setShowConnections((v) => !v) },
+              { label: "Grid", icon: Globe2, active: showCountries, toggle: () => setShowCountries((v) => !v) },
+              { label: "Night", icon: Moon, active: nightLights, toggle: () => setNightLights((v) => !v) },
+              { label: "Reset", icon: Filter, active: typeFilter !== "all", toggle: () => setTypeFilter("all") },
+            ].map((c) => (
+              <button
+                key={c.label}
+                type="button"
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs backdrop-blur-md transition ${c.active ? "border-primary/30 bg-card/80 text-primary" : "border-border/40 bg-card/60 text-muted-foreground hover:text-foreground"}`}
+                onClick={c.toggle}
+              >
+                <c.icon className="h-3.5 w-3.5" />
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Empty state */}
+          {stakeholders.length === 0 && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <div className="glass-panel max-w-sm p-8 text-center">
+                <Globe2 className="mx-auto mb-4 h-10 w-10 text-muted-foreground" />
+                <h3 className="text-xl text-foreground">Your globe is empty</h3>
+                <p className="mt-2 text-sm text-muted-foreground">Complete onboarding to place yourself on the network. Stakeholders will appear here as the network grows.</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Profile panel */}
+        <AnimatePresence>
+          {profileOpen && selected && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 360, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ type: "spring", damping: 26, stiffness: 260 }}
+              className="relative z-10 shrink-0 overflow-hidden border-l border-border/50"
+            >
+              <div className="flex h-full w-[360px] flex-col bg-card/80 backdrop-blur-md">
+                <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
                   <div>
-                    <p className="text-sm font-medium text-foreground">Interests</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {selectedStakeholder.interests.map((interest) => (
-                        <Badge key={interest} variant="secondary">{interest}</Badge>
-                      ))}
-                    </div>
+                    <p className="text-sm font-medium text-foreground">{selected.name}</p>
+                    <p className="text-xs text-muted-foreground">{selected.organization}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Initiatives</p>
-                    <div className="mt-3 space-y-2">
-                      {selectedStakeholder.initiatives.map((initiative) => (
-                        <div key={initiative} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
-                          {initiative}
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-[10px] uppercase">{selected.type}</Badge>
+                    <button type="button" onClick={() => setProfileOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                  </div>
+                </div>
+
+                <div className="flex border-b border-border/40 px-4">
+                  {(["profile", "feed", "ai"] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      className={`border-b-2 px-3 py-2.5 text-sm capitalize transition ${activeTab === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+
+                <ScrollArea className="flex-1 p-4">
+                  {activeTab === "profile" && (
+                    <div className="space-y-4">
+                      <div className="glass-panel p-4">
+                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                          <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{selected.city}, {selected.country}</span>
+                          <span className="inline-flex items-center gap-1"><Building2 className="h-3 w-3" />{selected.region}</span>
+                          <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />Score {selected.score}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{selected.bio}</p>
+                      {selected.metrics.length > 0 && (
+                        <div className="grid gap-2">
+                          {selected.metrics.map((m) => (
+                            <div key={m.label} className="flex items-center justify-between rounded-xl border border-border/40 px-4 py-3">
+                              <span className="text-xs uppercase tracking-wider text-muted-foreground">{m.label}</span>
+                              <span className="text-sm font-medium text-foreground">{m.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {selected.interests.length > 0 && (
+                        <div>
+                          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Interests</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selected.interests.map((i) => <Badge key={i} variant="secondary" className="text-xs">{i}</Badge>)}
+                          </div>
+                        </div>
+                      )}
+                      {selected.initiatives.length > 0 && (
+                        <div>
+                          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Initiatives</p>
+                          {selected.initiatives.map((i) => (
+                            <div key={i} className="mb-1.5 rounded-xl border border-border/40 px-4 py-3 text-sm text-muted-foreground">{i}</div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {activeTab === "feed" && (
+                    <div className="space-y-3">
+                      {feed.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No activity yet.</p>}
+                      {feed.map((p) => (
+                        <div key={p.id} className="glass-panel p-4">
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-[10px]">{p.category}</Badge>
+                            <span className="text-[11px] text-muted-foreground">{p.timestampLabel}</span>
+                          </div>
+                          <p className="mt-2.5 text-sm font-medium text-foreground">{p.title}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{p.content}</p>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              {activeTab === "feed" && (
-                <div className="space-y-3 pb-2">
-                  {feed.map((post) => (
-                    <div key={post.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <Badge>{post.category}</Badge>
-                        <p className="text-xs text-muted-foreground">{post.timestampLabel}</p>
-                      </div>
-                      <p className="mt-3 font-medium text-foreground">{post.title}</p>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.content}</p>
-                      <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
-                        <span>{post.likes} likes</span>
-                        <span>{post.comments} comments</span>
-                      </div>
+                  {activeTab === "ai" && (
+                    <div className="space-y-3">
+                      {insights.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No insights yet.</p>}
+                      {insights.map((ins) => (
+                        <div key={ins.id} className="glass-panel p-4">
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-[10px] uppercase">{ins.kind}</Badge>
+                            <span className="text-xs text-primary">{ins.confidence}%</span>
+                          </div>
+                          <p className="mt-2.5 text-sm font-medium text-foreground">{ins.title}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{ins.description}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {activeTab === "ai" && (
-                <div className="space-y-3 pb-2">
-                  {insights.map((insight) => (
-                    <div key={insight.id} className="rounded-[1.25rem] border border-border/70 bg-background/60 p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <Badge variant="secondary">{insight.kind}</Badge>
-                        <p className="text-xs text-primary">{insight.confidence}% confidence</p>
-                      </div>
-                      <p className="mt-3 font-medium text-foreground">{insight.title}</p>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{insight.description}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </div>
-        </aside>
+                  )}
+                </ScrollArea>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
-    </main>
+    </div>
   );
 }
+
+/* ─── Root ────────────────────────────────────────────────── */
 
 const Index = () => {
   const { user, loading } = useAuth();
   const { data: profile, isLoading } = useProfile(user?.id);
 
-  if (loading || (user && isLoading)) {
-    return <LoadingScreen />;
-  }
-
-  if (!user) {
-    return <AuthExperience />;
-  }
-
-  if (!profile?.onboarding_completed) {
-    return <OnboardingExperience />;
-  }
-
+  if (loading || (user && isLoading)) return <LoadingScreen />;
+  if (!user) return <AuthExperience />;
+  if (!profile?.onboarding_completed) return <OnboardingExperience />;
   return <NetworkExperience />;
 };
 
