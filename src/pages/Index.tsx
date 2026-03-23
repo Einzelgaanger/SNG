@@ -541,6 +541,10 @@ function NetworkExperience() {
                   <LayoutPanelLeft className="h-4 w-4" />
                   Navigator
                 </Button>
+                <Button type="button" variant="secondary" size="sm" className="xl:hidden" onClick={() => setProfileOpen((current) => !current)}>
+                  <UserRound className="h-4 w-4" />
+                  Profile
+                </Button>
                 <Button type="button" variant="secondary" size="sm" onClick={() => signOut()}>
                   <LogOut className="h-4 w-4" />
                   Sign out
