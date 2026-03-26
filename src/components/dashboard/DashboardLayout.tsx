@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import {
-  Globe2,
-  LogOut,
-  Menu,
-  Settings,
-  ShieldCheck,
-  Users,
-  X,
-} from "lucide-react";
+import { Globe2, LogOut, Menu, Settings, Users, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LoadingScreen } from "@/components/auth/LoadingScreen";
@@ -17,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useRoles } from "@/hooks/use-roles";
+import vggLogo from "@/assets/vgg-logo.webp";
 
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },
@@ -30,7 +23,7 @@ const adminItems = [
 export default function DashboardLayout() {
   const { user, loading, signOut } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
-  const { roles, isAdmin, isModerator, isLoading: rolesLoading } = useRoles(user?.id);
+  const { isAdmin, isModerator, isLoading: rolesLoading } = useRoles(user?.id);
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -59,17 +52,14 @@ export default function DashboardLayout() {
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden w-[240px] flex-col border-r border-border/40 bg-card/60 backdrop-blur-xl lg:flex">
-        <div className="flex h-14 items-center gap-3 border-b border-border/30 px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
-            <Globe2 className="h-4 w-4 text-primary" />
-          </div>
-          <span className="text-sm font-bold tracking-wide text-foreground">SNG</span>
+      <aside className="hidden w-[240px] flex-col border-r border-border/50 bg-card lg:flex">
+        <div className="flex h-14 items-center gap-3 border-b border-border/40 px-5">
+          <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           {isAdmin && (
-            <span className="ml-auto rounded-md bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Admin</span>
+            <span className="ml-auto rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Admin</span>
           )}
           {isModerator && !isAdmin && (
-            <span className="ml-auto rounded-md bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">Mod</span>
+            <span className="ml-auto rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">Mod</span>
           )}
         </div>
         <nav className="flex-1 space-y-1 p-3">
@@ -83,7 +73,7 @@ export default function DashboardLayout() {
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                   active
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 <item.icon className="h-4 w-4" />
@@ -105,7 +95,7 @@ export default function DashboardLayout() {
                     className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                       active
                         ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -116,8 +106,8 @@ export default function DashboardLayout() {
             </>
           )}
         </nav>
-        <div className="border-t border-border/30 p-3">
-          <div className="mb-2 rounded-lg bg-muted/30 px-3 py-2.5">
+        <div className="border-t border-border/40 p-3">
+          <div className="mb-2 rounded-lg bg-muted px-3 py-2.5">
             <p className="truncate text-sm font-medium text-foreground">{profile?.display_name || "User"}</p>
             <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           </div>
@@ -129,13 +119,8 @@ export default function DashboardLayout() {
 
       {/* Mobile header */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-border/40 bg-card/60 px-4 backdrop-blur-xl lg:hidden">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
-              <Globe2 className="h-4 w-4 text-primary" />
-            </div>
-            <span className="text-sm font-bold tracking-wide">SNG</span>
-          </div>
+        <header className="flex h-14 items-center justify-between border-b border-border/50 bg-card px-4 lg:hidden">
+          <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
@@ -157,10 +142,10 @@ export default function DashboardLayout() {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: "spring", damping: 26, stiffness: 260 }}
-                className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/40 bg-card lg:hidden"
+                className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/50 bg-card lg:hidden"
               >
-                <div className="flex h-14 items-center justify-between border-b border-border/30 px-5">
-                  <span className="text-sm font-bold tracking-wide">SNG</span>
+                <div className="flex h-14 items-center justify-between border-b border-border/40 px-5">
+                  <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
                   <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                     <X className="h-4 w-4" />
                   </Button>
@@ -183,7 +168,7 @@ export default function DashboardLayout() {
                     );
                   })}
                 </nav>
-                <div className="border-t border-border/30 p-3">
+                <div className="border-t border-border/40 p-3">
                   <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground" onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" /> Sign out
                   </Button>
