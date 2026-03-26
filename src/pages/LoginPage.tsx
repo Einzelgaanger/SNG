@@ -69,7 +69,6 @@ export default function LoginPage() {
     <div className="flex min-h-screen bg-background">
       {/* Left — brand panel */}
       <div className="relative hidden flex-1 overflow-hidden lg:flex">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
         {/* Decorative arcs */}
         <div className="absolute inset-0 overflow-hidden">
           <svg className="absolute -right-20 top-20 h-[500px] w-[500px] text-primary/[0.06]" viewBox="0 0 500 500" fill="none">
@@ -88,7 +87,7 @@ export default function LoginPage() {
           <div className="fade-in-slow max-w-lg space-y-8">
             <h1 className="text-5xl font-bold leading-[1.08] text-foreground xl:text-6xl">
               Map your global{" "}
-              <span className="text-gradient-brand">innovation network.</span>
+              <span className="text-brand">innovation network.</span>
             </h1>
             <p className="max-w-md text-base leading-relaxed text-muted-foreground">
               Discover stakeholders, visualize partnerships on an interactive globe, and unlock collaboration signals.

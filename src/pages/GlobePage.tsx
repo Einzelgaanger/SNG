@@ -78,7 +78,7 @@ export default function GlobePage() {
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-background">
       {/* Top toolbar */}
-      <div className="relative z-20 flex items-center justify-between border-b border-border/40 bg-card/50 px-4 py-2 backdrop-blur-md">
+      <div className="relative z-20 flex items-center justify-between border-b border-border/40 bg-card/50 px-2 py-2 backdrop-blur-md sm:px-4">
         <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
           <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
@@ -99,8 +99,8 @@ export default function GlobePage() {
       <div className="relative flex flex-1 overflow-hidden">
         <AnimatePresence>
           {navigatorOpen && (
-            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: 320, opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="relative z-10 shrink-0 overflow-hidden border-r border-border/40">
-              <div className="flex h-full w-[320px] flex-col bg-card/80 backdrop-blur-lg">
+            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: "100%", opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="absolute inset-0 z-30 shrink-0 overflow-hidden border-r border-border/40 sm:relative sm:inset-auto sm:z-10 sm:w-auto" style={{ maxWidth: 320 }}>
+              <div className="flex h-full w-full flex-col bg-card/95 backdrop-blur-lg sm:w-[320px] sm:bg-card/80">
                 <div className="flex items-center justify-between border-b border-border/30 px-4 py-3">
                   <p className="text-sm font-semibold text-foreground">Navigator</p>
                   <div className="flex items-center gap-2">
@@ -164,8 +164,8 @@ export default function GlobePage() {
 
         <AnimatePresence>
           {profileOpen && selected && (
-            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: 380, opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="relative z-10 shrink-0 overflow-hidden border-l border-border/40">
-              <div className="flex h-full w-[380px] flex-col bg-card/80 backdrop-blur-lg">
+            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: "100%", opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="absolute inset-0 z-30 shrink-0 overflow-hidden border-l border-border/40 sm:relative sm:inset-auto sm:z-10 sm:w-auto" style={{ maxWidth: 380 }}>
+              <div className="flex h-full w-full flex-col bg-card/95 backdrop-blur-lg sm:w-[380px] sm:bg-card/80">
                 <div className="flex items-center justify-between border-b border-border/30 px-4 py-3">
                   <div>
                     <p className="text-sm font-semibold text-foreground">{selected.name}</p>

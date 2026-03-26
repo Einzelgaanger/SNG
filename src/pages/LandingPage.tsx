@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, BarChart3, Globe2, Layers, Network, Shield, Sparkles, Users, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Globe2, Layers, Menu, Network, Shield, Sparkles, Users, X, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -38,6 +39,7 @@ const useCases = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -49,7 +51,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <a href="/" className="flex items-center">
             <img src={vggLogo} alt="Venture Garden Group" className="h-8 w-auto" />
           </a>
@@ -59,20 +61,43 @@ export default function LandingPage() {
             <a href="#network" className="transition hover:text-foreground">Network</a>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>
               Sign in
             </Button>
-            <Button size="sm" onClick={() => navigate("/login?mode=signup")}>
+            <Button size="sm" className="hidden sm:inline-flex" onClick={() => navigate("/login?mode=signup")}>
               Get Started <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
+              <Menu className="h-5 w-5" />
             </Button>
           </div>
         </div>
       </nav>
 
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-sm md:hidden">
+          <div className="flex h-16 items-center justify-between px-4">
+            <img src={vggLogo} alt="VGG" className="h-8 w-auto" />
+            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <div className="flex flex-col gap-4 p-6">
+            <a href="#features" className="text-lg font-medium text-foreground" onClick={() => setMobileMenuOpen(false)}>Features</a>
+            <a href="#use-cases" className="text-lg font-medium text-foreground" onClick={() => setMobileMenuOpen(false)}>Use Cases</a>
+            <a href="#network" className="text-lg font-medium text-foreground" onClick={() => setMobileMenuOpen(false)}>Network</a>
+            <div className="mt-4 flex flex-col gap-3">
+              <Button variant="outline" className="w-full" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}>Sign in</Button>
+              <Button className="w-full" onClick={() => { setMobileMenuOpen(false); navigate("/login?mode=signup"); }}>Get Started <ArrowRight className="ml-1 h-3.5 w-3.5" /></Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-        {/* Decorative arcs like VGG website */}
+        {/* Decorative arcs */}
         <div className="absolute inset-0 overflow-hidden">
           <svg className="absolute -right-32 -top-32 h-[600px] w-[600px] text-primary/[0.06]" viewBox="0 0 600 600" fill="none">
             <circle cx="300" cy="300" r="200" stroke="currentColor" strokeWidth="1" />
@@ -84,19 +109,19 @@ export default function LandingPage() {
             <circle cx="200" cy="200" r="190" stroke="currentColor" strokeWidth="0.5" />
           </svg>
         </div>
-        <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-20 md:pb-32 md:pt-28">
-          <motion.div className="max-w-3xl space-y-8" initial="hidden" animate="visible">
+        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 md:pb-32 md:pt-28">
+          <motion.div className="max-w-3xl space-y-6 sm:space-y-8" initial="hidden" animate="visible">
             <motion.div custom={0} variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               <Zap className="h-3.5 w-3.5" /> Stakeholder Network Globe
             </motion.div>
-            <motion.h1 custom={1} variants={fadeUp} className="text-5xl font-bold leading-[1.06] md:text-6xl lg:text-7xl">
+            <motion.h1 custom={1} variants={fadeUp} className="text-3xl font-bold leading-[1.06] sm:text-5xl md:text-6xl lg:text-7xl">
               Powering innovative{" "}
-              <span className="text-gradient-brand">transformation.</span>
+              <span className="text-brand">transformation.</span>
             </motion.h1>
-            <motion.p custom={2} variants={fadeUp} className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <motion.p custom={2} variants={fadeUp} className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
               We power transformative growth in emerging economies — mapping stakeholders, visualizing partnerships, and unlocking AI-powered collaboration signals.
             </motion.p>
-            <motion.div custom={3} variants={fadeUp} className="flex flex-wrap items-center gap-4">
+            <motion.div custom={3} variants={fadeUp} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <Button size="lg" className="h-12 px-8 text-sm font-semibold" onClick={() => navigate("/login?mode=signup")}>
                 Start for free <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -109,11 +134,11 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Stats */}
-          <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible" className="mt-20 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible" className="mt-12 grid grid-cols-2 gap-3 sm:mt-20 sm:gap-4 md:grid-cols-4">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
-                <p className="text-3xl font-bold text-gradient-brand">{s.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
+              <div key={s.label} className="rounded-xl border border-border/60 bg-card p-4 shadow-sm sm:p-6">
+                <p className="text-2xl font-bold text-primary sm:text-3xl">{s.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{s.label}</p>
               </div>
             ))}
           </motion.div>
@@ -121,14 +146,14 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="relative border-t border-border/30 bg-muted/30 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-6">
+      <section id="features" className="relative border-t border-border/30 bg-muted/30 py-16 sm:py-24 md:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Platform</p>
-            <h2 className="mt-4 text-4xl font-bold md:text-5xl">Everything you need to navigate the global ecosystem</h2>
-            <p className="mt-4 text-lg text-muted-foreground">A comprehensive suite of tools designed for stakeholders who think globally.</p>
+            <h2 className="mt-4 text-2xl font-bold sm:text-4xl md:text-5xl">Everything you need to navigate the global ecosystem</h2>
+            <p className="mt-4 text-base text-muted-foreground sm:text-lg">A comprehensive suite of tools designed for stakeholders who think globally.</p>
           </div>
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
@@ -136,12 +161,12 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="group rounded-2xl border border-border/50 bg-card p-8 shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
+                className="group rounded-2xl border border-border/50 bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-md sm:p-8"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
                   <f.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold text-foreground">{f.title}</h3>
+                <h3 className="mt-5 text-lg font-semibold text-foreground sm:text-xl">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
@@ -150,13 +175,13 @@ export default function LandingPage() {
       </section>
 
       {/* Visual showcase */}
-      <section className="border-t border-border/30 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+      <section className="border-t border-border/30 py-16 sm:py-24 md:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-2">
             <div className="space-y-6">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Intelligence</p>
-              <h2 className="text-4xl font-bold md:text-5xl">AI-powered collaboration signals</h2>
-              <p className="text-lg leading-relaxed text-muted-foreground">
+              <h2 className="text-2xl font-bold sm:text-4xl md:text-5xl">AI-powered collaboration signals</h2>
+              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
                 Our platform analyzes geographic proximity, thematic alignment, and network position to surface high-confidence partnership opportunities.
               </p>
               <div className="space-y-4 pt-4">
@@ -174,13 +199,13 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-primary/5 to-accent/5 p-12">
+            <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-muted/30 p-8 sm:p-12">
               <div className="flex items-center justify-center">
-                <div className="relative h-64 w-64">
+                <div className="relative h-48 w-48 sm:h-64 sm:w-64">
                   <div className="absolute inset-0 animate-pulse rounded-full border-2 border-primary/20" />
                   <div className="absolute inset-4 animate-pulse rounded-full border border-accent/20" style={{ animationDelay: "0.5s" }} />
-                  <div className="absolute inset-8 rounded-full bg-gradient-to-br from-primary/10 to-accent/10" />
-                  <Globe2 className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-primary" />
+                  <div className="absolute inset-8 rounded-full bg-primary/5" />
+                  <Globe2 className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 text-primary sm:h-16 sm:w-16" />
                 </div>
               </div>
             </div>
@@ -189,15 +214,15 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases */}
-      <section id="use-cases" className="border-t border-border/30 bg-muted/30 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-6">
+      <section id="use-cases" className="border-t border-border/30 bg-muted/30 py-16 sm:py-24 md:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Use Cases</p>
-            <h2 className="mt-4 text-4xl font-bold md:text-5xl">Built for every player in the ecosystem</h2>
+            <h2 className="mt-4 text-2xl font-bold sm:text-4xl md:text-5xl">Built for every player in the ecosystem</h2>
           </div>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-3 sm:mt-12 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {useCases.map((uc) => (
-              <div key={uc.title} className="rounded-xl border border-border/50 bg-card p-6 shadow-sm">
+              <div key={uc.title} className="rounded-xl border border-border/50 bg-card p-5 shadow-sm sm:p-6">
                 <p className="text-base font-semibold text-foreground">{uc.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{uc.desc}</p>
               </div>
@@ -207,19 +232,18 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section id="network" className="relative border-t border-border/30 py-24 md:py-32">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/3 via-background to-accent/3" />
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
+      <section id="network" className="relative border-t border-border/30 py-16 sm:py-24 md:py-32">
+        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Join the Network</p>
-          <h2 className="mt-4 text-4xl font-bold md:text-5xl">Ready to map your <span className="text-gradient-brand">innovation network?</span></h2>
-          <p className="mt-6 text-lg text-muted-foreground">
+          <h2 className="mt-4 text-2xl font-bold sm:text-4xl md:text-5xl">Ready to map your <span className="text-brand">innovation network?</span></h2>
+          <p className="mt-4 text-base text-muted-foreground sm:mt-6 sm:text-lg">
             Join thousands of stakeholders already using SNG to discover partnerships, track impact, and navigate the global innovation ecosystem.
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button size="lg" className="h-12 px-8 text-sm font-semibold" onClick={() => navigate("/login?mode=signup")}>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
+            <Button size="lg" className="h-12 w-full px-8 text-sm font-semibold sm:w-auto" onClick={() => navigate("/login?mode=signup")}>
               Create free account <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button variant="outline" size="lg" className="h-12 px-8 text-sm" onClick={() => navigate("/login")}>
+            <Button variant="outline" size="lg" className="h-12 w-full px-8 text-sm sm:w-auto" onClick={() => navigate("/login")}>
               Sign in
             </Button>
           </div>
@@ -227,8 +251,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/30 bg-muted/20 py-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
+      <footer className="border-t border-border/30 bg-muted/20 py-8 sm:py-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:px-6 md:flex-row">
           <img src={vggLogo} alt="Venture Garden Group" className="h-7 w-auto" />
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Venture Garden Group. All rights reserved.</p>
         </div>
