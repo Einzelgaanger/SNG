@@ -7,9 +7,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
-import AppPage from "./pages/Index";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import DashboardLayout from "./components/dashboard/DashboardLayout";
+import GlobePage from "./pages/GlobePage";
+import ProfileSettings from "./pages/ProfileSettings";
+import AdminUsers from "./pages/AdminUsers";
+import OnboardingPage from "./pages/OnboardingPage";
 
 const queryClient = new QueryClient();
 
@@ -23,8 +27,13 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/app" element={<AppPage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/app" element={<DashboardLayout />}>
+              <Route index element={<GlobePage />} />
+              <Route path="settings" element={<ProfileSettings />} />
+              <Route path="admin/users" element={<AdminUsers />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
