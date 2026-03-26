@@ -164,8 +164,8 @@ export default function GlobePage() {
 
         <AnimatePresence>
           {profileOpen && selected && (
-            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: 380, opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="relative z-10 shrink-0 overflow-hidden border-l border-border/40">
-              <div className="flex h-full w-[380px] flex-col bg-card/80 backdrop-blur-lg">
+            <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: "100%", opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: "spring", damping: 26, stiffness: 260 }} className="absolute inset-0 z-30 shrink-0 overflow-hidden border-l border-border/40 sm:relative sm:inset-auto sm:z-10 sm:w-auto" style={{ maxWidth: 380 }}>
+              <div className="flex h-full w-full flex-col bg-card/95 backdrop-blur-lg sm:w-[380px] sm:bg-card/80">
                 <div className="flex items-center justify-between border-b border-border/30 px-4 py-3">
                   <div>
                     <p className="text-sm font-semibold text-foreground">{selected.name}</p>
