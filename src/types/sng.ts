@@ -7,6 +7,8 @@ export type StakeholderType =
   | "nonprofit"
   | "other";
 
+export type AppRole = "admin" | "moderator" | "user";
+
 export type VisualMode = "enhanced" | "heatmap" | "simple" | "satellite";
 export type ProfileTab = "profile" | "feed" | "ai";
 
@@ -60,7 +62,11 @@ export interface ProfileRecord {
   organization_name: string | null;
   region: string | null;
   city: string | null;
+  country: string | null;
   bio: string | null;
+  linkedin_url: string | null;
+  website_url: string | null;
+  phone: string | null;
   interests: string[];
   initiatives: string[];
   impact_metrics: Record<string, string | number | null>;
