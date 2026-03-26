@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart3, Globe2, Layers, Network, Shield, Sparkles, Users, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 import heroCity from "@/assets/hero-city.jpg";
 import globeNetwork from "@/assets/globe-network.jpg";
 import featureNetwork from "@/assets/feature-network.jpg";
@@ -38,7 +40,13 @@ const useCases = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/app", { replace: true });
+    }
+  }, [loading, user, navigate]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
