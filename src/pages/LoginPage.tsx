@@ -81,7 +81,7 @@ export default function LoginPage() {
         </div>
         <div className="relative z-10 flex flex-1 flex-col justify-between p-12 xl:p-16">
           <a href="/">
-            <img src={vggLogo} alt="Venture Garden Group" className="h-9 w-auto" />
+            <img src={sngLogo} alt="Venture Garden Group" className="h-9 w-auto" />
           </a>
 
           <div className="fade-in-slow max-w-lg space-y-8">
@@ -117,7 +117,7 @@ export default function LoginPage() {
       {/* Right — auth form */}
       <div className="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-[480px] lg:shrink-0 xl:w-[520px]">
         <a href="/" className="mb-8 lg:hidden">
-          <img src={vggLogo} alt="Venture Garden Group" className="h-8 w-auto" />
+          <img src={sngLogo} alt="Venture Garden Group" className="h-8 w-auto" />
         </a>
 
         <div className="fade-in w-full max-w-sm space-y-8">

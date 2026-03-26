@@ -53,7 +53,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <a href="/" className="flex items-center">
-            <img src={vggLogo} alt="Venture Garden Group" className="h-8 w-auto" />
+            <img src={sngLogo} alt="Venture Garden Group" className="h-8 w-auto" />
           </a>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="transition hover:text-foreground">Features</a>
@@ -78,7 +78,7 @@ export default function LandingPage() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-sm md:hidden">
           <div className="flex h-16 items-center justify-between px-4">
-            <img src={vggLogo} alt="VGG" className="h-8 w-auto" />
+            <img src={sngLogo} alt="VGG" className="h-8 w-auto" />
             <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
@@ -253,7 +253,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border/30 bg-muted/20 py-8 sm:py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:px-6 md:flex-row">
-          <img src={vggLogo} alt="Venture Garden Group" className="h-7 w-auto" />
+          <img src={sngLogo} alt="Venture Garden Group" className="h-7 w-auto" />
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Venture Garden Group. All rights reserved.</p>
         </div>
       </footer>

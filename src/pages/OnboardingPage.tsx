@@ -133,7 +133,7 @@ export default function OnboardingPage() {
         <div className="absolute inset-0 bg-muted/30" />
         <div className="relative z-10 flex flex-1 flex-col justify-between p-10">
           <div className="space-y-8">
-            <img src={vggLogo} alt="VGG" className="h-8 w-auto" />
+            <img src={sngLogo} alt="VGG" className="h-8 w-auto" />
             <div>
               <h1 className="text-3xl font-bold text-foreground">Set up your profile</h1>
               <p className="mt-2 text-sm text-muted-foreground">Complete these steps to join the stakeholder network.</p>
