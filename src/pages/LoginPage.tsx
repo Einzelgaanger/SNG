@@ -69,7 +69,6 @@ export default function LoginPage() {
     <div className="flex min-h-screen bg-background">
       {/* Left — brand panel */}
       <div className="relative hidden flex-1 overflow-hidden lg:flex">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
         {/* Decorative arcs */}
         <div className="absolute inset-0 overflow-hidden">
           <svg className="absolute -right-20 top-20 h-[500px] w-[500px] text-primary/[0.06]" viewBox="0 0 500 500" fill="none">
