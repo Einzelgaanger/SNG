@@ -87,7 +87,7 @@ export default function LoginPage() {
           <div className="fade-in-slow max-w-lg space-y-8">
             <h1 className="text-5xl font-bold leading-[1.08] text-foreground xl:text-6xl">
               Map your global{" "}
-              <span className="text-gradient-brand">innovation network.</span>
+              <span className="text-brand">innovation network.</span>
             </h1>
             <p className="max-w-md text-base leading-relaxed text-muted-foreground">
               Discover stakeholders, visualize partnerships on an interactive globe, and unlock collaboration signals.

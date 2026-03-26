@@ -164,7 +164,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* Right — form */}
-      <div className="flex flex-1 items-center justify-center px-6 py-12">
+      <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
         <div className="fade-in w-full max-w-lg space-y-8">
           <div className="flex items-center gap-2 lg:hidden">
             {stepLabels.map((_, i) => (
