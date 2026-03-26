@@ -106,13 +106,16 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           city: string | null
+          country: string | null
           created_at: string
           display_name: string | null
           impact_metrics: Json
           initiatives: string[]
           interests: string[]
+          linkedin_url: string | null
           onboarding_completed: boolean
           organization_name: string | null
+          phone: string | null
           preferences: Json
           region: string | null
           stakeholder_type:
@@ -120,18 +123,22 @@ export type Database = {
             | null
           updated_at: string
           user_id: string
+          website_url: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          country?: string | null
           created_at?: string
           display_name?: string | null
           impact_metrics?: Json
           initiatives?: string[]
           interests?: string[]
+          linkedin_url?: string | null
           onboarding_completed?: boolean
           organization_name?: string | null
+          phone?: string | null
           preferences?: Json
           region?: string | null
           stakeholder_type?:
@@ -139,18 +146,22 @@ export type Database = {
             | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          country?: string | null
           created_at?: string
           display_name?: string | null
           impact_metrics?: Json
           initiatives?: string[]
           interests?: string[]
+          linkedin_url?: string | null
           onboarding_completed?: boolean
           organization_name?: string | null
+          phone?: string | null
           preferences?: Json
           region?: string | null
           stakeholder_type?:
@@ -158,6 +169,7 @@ export type Database = {
             | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }
