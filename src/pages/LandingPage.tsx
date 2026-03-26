@@ -40,7 +40,13 @@ const useCases = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/app", { replace: true });
+    }
+  }, [loading, user, navigate]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
