@@ -130,7 +130,7 @@ export default function OnboardingPage() {
     <div className="flex min-h-screen bg-background">
       {/* Left — progress sidebar */}
       <div className="relative hidden w-[360px] flex-col justify-between overflow-hidden border-r border-border/50 lg:flex">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-accent/5" />
+        <div className="absolute inset-0 bg-muted/30" />
         <div className="relative z-10 flex flex-1 flex-col justify-between p-10">
           <div className="space-y-8">
             <img src={vggLogo} alt="VGG" className="h-8 w-auto" />
