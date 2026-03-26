@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useRoles } from "@/hooks/use-roles";
-import sngLogo from "@/assets/logo.png";
+import vggLogo from "@/assets/vgg-logo.webp";
 
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },
@@ -54,7 +54,7 @@ export default function DashboardLayout() {
       {/* Desktop sidebar */}
       <aside className="hidden w-[240px] flex-col border-r border-border/50 bg-card lg:flex">
         <div className="flex h-14 items-center gap-3 border-b border-border/40 px-5">
-          <img src={sngLogo} alt="VGG" className="h-6 w-auto" />
+          <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           {isAdmin && (
             <span className="ml-auto rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Admin</span>
           )}
@@ -120,7 +120,7 @@ export default function DashboardLayout() {
       {/* Mobile header */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-14 items-center justify-between border-b border-border/50 bg-card px-4 lg:hidden">
-          <img src={sngLogo} alt="VGG" className="h-6 w-auto" />
+          <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
@@ -145,7 +145,7 @@ export default function DashboardLayout() {
                 className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/50 bg-card lg:hidden"
               >
                 <div className="flex h-14 items-center justify-between border-b border-border/40 px-5">
-                  <img src={sngLogo} alt="VGG" className="h-6 w-auto" />
+                  <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
                   <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                     <X className="h-4 w-4" />
                   </Button>
