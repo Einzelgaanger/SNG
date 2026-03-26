@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { forgotPasswordSchema, signInSchema, signUpSchema } from "@/lib/auth-schemas";
-import vggLogo from "@/assets/vgg-logo.webp";
+import sngLogo from "@/assets/logo.png";
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();

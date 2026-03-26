@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useRoles } from "@/hooks/use-roles";
-import vggLogo from "@/assets/vgg-logo.webp";
+import sngLogo from "@/assets/logo.png";
 
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },

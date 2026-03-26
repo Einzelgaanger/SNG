@@ -15,7 +15,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { onboardingSchema, type OnboardingValues } from "@/lib/auth-schemas";
 import { interestCatalog, regionOptions } from "@/lib/mock-stakeholders";
 import type { StakeholderType } from "@/types/sng";
-import vggLogo from "@/assets/vgg-logo.webp";
+import sngLogo from "@/assets/logo.png";
 
 const stakeholderTypes: { value: StakeholderType; label: string; desc: string }[] = [
   { value: "entrepreneur", label: "Entrepreneur", desc: "Building new ventures" },

@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import vggLogo from "@/assets/vgg-logo.webp";
+import sngLogo from "@/assets/logo.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
