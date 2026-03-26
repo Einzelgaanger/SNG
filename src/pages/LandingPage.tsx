@@ -5,10 +5,7 @@ import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import heroCity from "@/assets/hero-city.jpg";
-import globeNetwork from "@/assets/globe-network.jpg";
-import featureNetwork from "@/assets/feature-network.jpg";
-import authCollaboration from "@/assets/auth-collaboration.jpg";
+import vggLogo from "@/assets/vgg-logo.webp";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -47,17 +44,15 @@ export default function LandingPage() {
       navigate("/app", { replace: true });
     }
   }, [loading, user, navigate]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
-              <Globe2 className="h-4.5 w-4.5 text-primary" />
-            </div>
-            <span className="text-sm font-bold tracking-wide">SNG</span>
-          </div>
+          <a href="/" className="flex items-center">
+            <img src={vggLogo} alt="Venture Garden Group" className="h-8 w-auto" />
+          </a>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="transition hover:text-foreground">Features</a>
             <a href="#use-cases" className="transition hover:text-foreground">Use Cases</a>
@@ -76,27 +71,36 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={globeNetwork} alt="" className="h-full w-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/90 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+        {/* Decorative arcs like VGG website */}
+        <div className="absolute inset-0 overflow-hidden">
+          <svg className="absolute -right-32 -top-32 h-[600px] w-[600px] text-primary/[0.06]" viewBox="0 0 600 600" fill="none">
+            <circle cx="300" cy="300" r="200" stroke="currentColor" strokeWidth="1" />
+            <circle cx="300" cy="300" r="260" stroke="currentColor" strokeWidth="1" />
+            <circle cx="300" cy="300" r="150" stroke="currentColor" strokeWidth="0.5" />
+          </svg>
+          <svg className="absolute -left-20 bottom-0 h-[400px] w-[400px] text-accent/[0.06]" viewBox="0 0 400 400" fill="none">
+            <circle cx="200" cy="200" r="150" stroke="currentColor" strokeWidth="1" />
+            <circle cx="200" cy="200" r="190" stroke="currentColor" strokeWidth="0.5" />
+          </svg>
         </div>
         <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-20 md:pb-32 md:pt-28">
           <motion.div className="max-w-3xl space-y-8" initial="hidden" animate="visible">
             <motion.div custom={0} variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               <Zap className="h-3.5 w-3.5" /> Stakeholder Network Globe
             </motion.div>
-            <motion.h1 custom={1} variants={fadeUp} className="text-5xl leading-[1.06] md:text-6xl lg:text-7xl">
-              Map your global<br />
-              <span className="text-gradient-warm">innovation network.</span>
+            <motion.h1 custom={1} variants={fadeUp} className="text-5xl font-bold leading-[1.06] md:text-6xl lg:text-7xl">
+              Powering innovative{" "}
+              <span className="text-gradient-brand">transformation.</span>
             </motion.h1>
             <motion.p custom={2} variants={fadeUp} className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Discover stakeholders, visualize partnerships on an interactive 3D globe, and unlock AI-powered collaboration signals — all from one platform.
+              We power transformative growth in emerging economies — mapping stakeholders, visualizing partnerships, and unlocking AI-powered collaboration signals.
             </motion.p>
             <motion.div custom={3} variants={fadeUp} className="flex flex-wrap items-center gap-4">
               <Button size="lg" className="h-12 px-8 text-sm font-semibold" onClick={() => navigate("/login?mode=signup")}>
                 Start for free <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button variant="outline" size="lg" className="h-12 px-8 border-border/50 text-sm" onClick={() => {
+              <Button variant="outline" size="lg" className="h-12 px-8 text-sm" onClick={() => {
                 document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
               }}>
                 See how it works
@@ -107,8 +111,8 @@ export default function LandingPage() {
           {/* Stats */}
           <motion.div custom={4} variants={fadeUp} initial="hidden" animate="visible" className="mt-20 grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border/30 bg-card/50 p-6 backdrop-blur-sm">
-                <p className="text-3xl font-bold text-gradient-warm" style={{ fontFamily: "Instrument Serif" }}>{s.value}</p>
+              <div key={s.label} className="rounded-xl border border-border/60 bg-card p-6 shadow-sm">
+                <p className="text-3xl font-bold text-gradient-brand">{s.value}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
               </div>
             ))}
@@ -117,11 +121,11 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="relative border-t border-border/20 py-24 md:py-32">
+      <section id="features" className="relative border-t border-border/30 bg-muted/30 py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Platform</p>
-            <h2 className="mt-4 text-4xl md:text-5xl">Everything you need to navigate<br />the global ecosystem</h2>
+            <h2 className="mt-4 text-4xl font-bold md:text-5xl">Everything you need to navigate the global ecosystem</h2>
             <p className="mt-4 text-lg text-muted-foreground">A comprehensive suite of tools designed for stakeholders who think globally.</p>
           </div>
           <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -132,12 +136,12 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="group rounded-2xl border border-border/30 bg-card/40 p-8 transition-all hover:border-primary/20 hover:bg-card/70"
+                className="group rounded-2xl border border-border/50 bg-card p-8 shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
                   <f.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-5 text-xl font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>{f.title}</h3>
+                <h3 className="mt-5 text-xl font-semibold text-foreground">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
@@ -146,12 +150,12 @@ export default function LandingPage() {
       </section>
 
       {/* Visual showcase */}
-      <section className="border-t border-border/20 py-24 md:py-32">
+      <section className="border-t border-border/30 py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="space-y-6">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Intelligence</p>
-              <h2 className="text-4xl md:text-5xl">AI-powered collaboration<br />signals</h2>
+              <h2 className="text-4xl font-bold md:text-5xl">AI-powered collaboration signals</h2>
               <p className="text-lg leading-relaxed text-muted-foreground">
                 Our platform analyzes geographic proximity, thematic alignment, and network position to surface high-confidence partnership opportunities.
               </p>
@@ -170,49 +174,44 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl border border-border/30">
-              <img src={featureNetwork} alt="Network visualization" className="h-full w-full object-cover" loading="lazy" width={1200} height={800} />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+            <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-primary/5 to-accent/5 p-12">
+              <div className="flex items-center justify-center">
+                <div className="relative h-64 w-64">
+                  <div className="absolute inset-0 animate-pulse rounded-full border-2 border-primary/20" />
+                  <div className="absolute inset-4 animate-pulse rounded-full border border-accent/20" style={{ animationDelay: "0.5s" }} />
+                  <div className="absolute inset-8 rounded-full bg-gradient-to-br from-primary/10 to-accent/10" />
+                  <Globe2 className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-primary" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Use Cases */}
-      <section id="use-cases" className="border-t border-border/20 py-24 md:py-32">
+      <section id="use-cases" className="border-t border-border/30 bg-muted/30 py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="relative overflow-hidden rounded-2xl border border-border/30 lg:order-first">
-              <img src={authCollaboration} alt="Global collaboration" className="h-full w-full object-cover" loading="lazy" width={800} height={1200} />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/40 to-transparent" />
-            </div>
-            <div className="space-y-8">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Use Cases</p>
-                <h2 className="mt-4 text-4xl md:text-5xl">Built for every player<br />in the ecosystem</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Use Cases</p>
+            <h2 className="mt-4 text-4xl font-bold md:text-5xl">Built for every player in the ecosystem</h2>
+          </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {useCases.map((uc) => (
+              <div key={uc.title} className="rounded-xl border border-border/50 bg-card p-6 shadow-sm">
+                <p className="text-base font-semibold text-foreground">{uc.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{uc.desc}</p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {useCases.map((uc) => (
-                  <div key={uc.title} className="rounded-xl border border-border/30 bg-card/40 p-5">
-                    <p className="text-sm font-semibold text-foreground">{uc.title}</p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{uc.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Network section */}
-      <section id="network" className="relative border-t border-border/20 py-24 md:py-32">
-        <div className="absolute inset-0">
-          <img src={heroCity} alt="" className="h-full w-full object-cover opacity-15" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
-        </div>
+      {/* CTA */}
+      <section id="network" className="relative border-t border-border/30 py-24 md:py-32">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/3 via-background to-accent/3" />
         <div className="relative mx-auto max-w-3xl px-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">Join the Network</p>
-          <h2 className="mt-4 text-4xl md:text-5xl">Ready to map your<br /><span className="text-gradient-warm">innovation network?</span></h2>
+          <h2 className="mt-4 text-4xl font-bold md:text-5xl">Ready to map your <span className="text-gradient-brand">innovation network?</span></h2>
           <p className="mt-6 text-lg text-muted-foreground">
             Join thousands of stakeholders already using SNG to discover partnerships, track impact, and navigate the global innovation ecosystem.
           </p>
@@ -220,7 +219,7 @@ export default function LandingPage() {
             <Button size="lg" className="h-12 px-8 text-sm font-semibold" onClick={() => navigate("/login?mode=signup")}>
               Create free account <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button variant="outline" size="lg" className="h-12 px-8 border-border/50 text-sm" onClick={() => navigate("/login")}>
+            <Button variant="outline" size="lg" className="h-12 px-8 text-sm" onClick={() => navigate("/login")}>
               Sign in
             </Button>
           </div>
@@ -228,15 +227,10 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/20 py-12">
+      <footer className="border-t border-border/30 bg-muted/20 py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
-              <Globe2 className="h-4 w-4 text-primary" />
-            </div>
-            <span className="text-sm font-bold tracking-wide">SNG</span>
-          </div>
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Stakeholder Network Globe. All rights reserved.</p>
+          <img src={vggLogo} alt="Venture Garden Group" className="h-7 w-auto" />
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Venture Garden Group. All rights reserved.</p>
         </div>
       </footer>
     </div>
