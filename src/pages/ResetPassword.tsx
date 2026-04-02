@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Globe2, KeyRound } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Globe2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -39,32 +40,56 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="fade-in w-full max-w-md">
-        <div className="mb-8 flex items-center justify-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10">
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 py-12">
+      <div className="mesh-hero pointer-events-none absolute inset-0 opacity-90" />
+      <div className="relative w-full max-w-md">
+        <Link
+          to="/login"
+          className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to sign in
+        </Link>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10 shadow-sm">
             <Globe2 className="h-5 w-5 text-primary" />
           </div>
-          <span className="text-sm font-semibold tracking-wide text-foreground">SNG</span>
+          <span className="text-sm font-semibold tracking-tight text-foreground">SNG</span>
         </div>
-        <Card className="glass-panel-solid border-border/30">
+        <Card className="auth-form-shell border-border/40 bg-card/90">
           <CardHeader className="space-y-4 pb-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
               <KeyRound className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-2xl">New password</CardTitle>
+              <CardTitle className="text-2xl font-semibold tracking-tight">New password</CardTitle>
               <CardDescription className="text-muted-foreground">Choose a strong password to secure your account.</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             {!canReset ? (
-              <p className="text-sm text-muted-foreground">Open this page from the recovery email to continue.</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Open this page from the recovery email link to continue.
+              </p>
             ) : (
               <form className="space-y-4" onSubmit={handleSubmit}>
-                <Input type="password" placeholder="New password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 border-border/50 bg-card/50" />
-                <Input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="h-11 border-border/50 bg-card/50" />
-                <Button type="submit" className="w-full" disabled={submitting}>
+                <Input
+                  type="password"
+                  placeholder="New password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11 border-border/50 bg-background/60"
+                  autoComplete="new-password"
+                />
+                <Input
+                  type="password"
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="h-11 border-border/50 bg-background/60"
+                  autoComplete="new-password"
+                />
+                <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={submitting}>
                   {submitting ? "Updating…" : "Update password"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

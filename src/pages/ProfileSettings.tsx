@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
@@ -101,12 +100,12 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-2xl space-y-8 px-6 py-8">
-        <div className="flex items-center justify-between">
+    <div className="app-page">
+      <div className="app-container">
+        <div className="app-header">
           <div>
-            <h1 className="text-3xl text-foreground">Profile Settings</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Manage your stakeholder profile and preferences.</p>
+            <h1 className="app-header-title">Profile Settings</h1>
+            <p className="app-header-description">Manage your stakeholder profile and preferences.</p>
           </div>
           <div className="flex items-center gap-2">
             {roles.map((r) => (
@@ -115,11 +114,9 @@ export default function ProfileSettings() {
           </div>
         </div>
 
-        <Separator />
-
         {/* Identity */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>Identity</h2>
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Identity</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="relative">
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -143,11 +140,9 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <Separator />
-
         {/* Contact */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>Contact</h2>
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Contact</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="relative">
               <Linkedin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -164,11 +159,9 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <Separator />
-
         {/* Location */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>Location</h2>
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Location</h2>
           <div className="flex flex-wrap gap-2">
             {regionOptions.map((r) => (
               <button key={r.value} type="button" className={`rounded-full border px-3 py-1.5 text-sm transition-all ${region === r.value ? "border-primary bg-primary/10 text-foreground" : "border-border/50 text-muted-foreground hover:border-primary/30"}`} onClick={() => setRegion(r.value)}>
@@ -185,11 +178,9 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <Separator />
-
         {/* Interests */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>Interests</h2>
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Interests</h2>
           <div className="flex flex-wrap gap-2">
             {interestCatalog.map((interest) => {
               const sel = interests.includes(interest);
@@ -202,11 +193,9 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <Separator />
-
         {/* Impact */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium text-foreground" style={{ fontFamily: "DM Sans" }}>Impact Metrics</h2>
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Impact Metrics</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             <Input placeholder="Funding (USD)" value={fundingUsd} onChange={(e) => setFundingUsd(e.target.value)} className="h-11 border-border/50 bg-card/50" />
             <Input placeholder="People reached" value={peopleReached} onChange={(e) => setPeopleReached(e.target.value)} className="h-11 border-border/50 bg-card/50" />
@@ -214,7 +203,7 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <div className="flex justify-end pb-8">
+        <div className="flex justify-end pb-2">
           <Button onClick={handleSave} disabled={isSaving}>
             <Save className="mr-2 h-4 w-4" />
             {isSaving ? "Saving…" : "Save Changes"}

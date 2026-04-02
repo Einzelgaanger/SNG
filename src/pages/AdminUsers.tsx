@@ -13,10 +13,7 @@ import {
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useRoles } from "@/hooks/use-roles";
 import { useAllProfiles, useAllRoles, useAssignRole, useRemoveRole } from "@/hooks/use-admin";
@@ -83,22 +80,22 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-4xl space-y-6 px-6 py-8">
-        <div>
-          <h1 className="text-3xl text-foreground">User Management</h1>
-          <p className="mt-1 text-sm text-muted-foreground">View all stakeholders and manage their roles.</p>
+    <div className="app-page">
+      <div className="app-container max-w-6xl">
+        <div className="app-header">
+          <div>
+            <h1 className="app-header-title">User Management</h1>
+            <p className="app-header-description">View all stakeholders and manage their roles.</p>
+          </div>
+          <Badge variant="secondary" className="w-fit text-xs">{filteredProfiles.length} users</Badge>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="surface-card flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Search by name, organization, or ID…" value={search} onChange={(e) => setSearch(e.target.value)} className="h-11 border-border/50 bg-card/50 pl-10" />
           </div>
-          <Badge variant="secondary" className="text-xs">{filteredProfiles.length} users</Badge>
         </div>
-
-        <Separator />
 
         <div className="space-y-3">
           {filteredProfiles.map((p) => {

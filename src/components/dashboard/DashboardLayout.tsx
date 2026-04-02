@@ -50,10 +50,10 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-muted/20">
       {/* Desktop sidebar */}
-      <aside className="hidden w-[240px] flex-col border-r border-border/50 bg-card lg:flex">
-        <div className="flex h-14 items-center gap-3 border-b border-border/40 px-5">
+      <aside className="hidden w-[260px] flex-col border-r border-border/50 bg-card/90 backdrop-blur lg:flex">
+        <div className="flex h-16 items-center gap-3 border-b border-border/40 px-5">
           <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           {isAdmin && (
             <span className="ml-auto rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Admin</span>
@@ -62,7 +62,7 @@ export default function DashboardLayout() {
             <span className="ml-auto rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">Mod</span>
           )}
         </div>
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="flex-1 space-y-1 p-4">
           {allNav.map((item) => {
             const active = location.pathname === item.path;
             return (
@@ -72,8 +72,8 @@ export default function DashboardLayout() {
                 onClick={() => navigate(item.path)}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                   active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/10 text-primary shadow-sm"
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 }`}
               >
                 <item.icon className="h-4 w-4" />
@@ -94,8 +94,8 @@ export default function DashboardLayout() {
                     onClick={() => navigate(item.path)}
                     className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                       active
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-primary/10 text-primary shadow-sm"
+                        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -107,7 +107,7 @@ export default function DashboardLayout() {
           )}
         </nav>
         <div className="border-t border-border/40 p-3">
-          <div className="mb-2 rounded-lg bg-muted px-3 py-2.5">
+          <div className="mb-2 rounded-lg border border-border/40 bg-muted/60 px-3 py-2.5">
             <p className="truncate text-sm font-medium text-foreground">{profile?.display_name || "User"}</p>
             <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           </div>
@@ -119,7 +119,7 @@ export default function DashboardLayout() {
 
       {/* Mobile header */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-border/50 bg-card px-4 lg:hidden">
+        <header className="flex h-16 items-center justify-between border-b border-border/50 bg-card/90 px-4 backdrop-blur lg:hidden">
           <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
@@ -142,9 +142,9 @@ export default function DashboardLayout() {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: "spring", damping: 26, stiffness: 260 }}
-                className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/50 bg-card lg:hidden"
+                className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/50 bg-card/95 backdrop-blur lg:hidden"
               >
-                <div className="flex h-14 items-center justify-between border-b border-border/40 px-5">
+                <div className="flex h-16 items-center justify-between border-b border-border/40 px-5">
                   <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
                   <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                     <X className="h-4 w-4" />
@@ -159,7 +159,7 @@ export default function DashboardLayout() {
                         type="button"
                         onClick={() => { navigate(item.path); setSidebarOpen(false); }}
                         className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+                          active ? "bg-primary/10 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
                         }`}
                       >
                         <item.icon className="h-4 w-4" />

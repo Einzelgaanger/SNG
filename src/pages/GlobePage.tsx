@@ -78,7 +78,7 @@ export default function GlobePage() {
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-background">
       {/* Top toolbar */}
-      <div className="relative z-20 flex items-center justify-between border-b border-border/40 bg-card/50 px-2 py-2 backdrop-blur-md sm:px-4">
+      <div className="relative z-20 flex items-center justify-between border-b border-border/40 bg-card/70 px-2 py-2 backdrop-blur-md sm:px-4">
         <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
           <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
@@ -86,7 +86,7 @@ export default function GlobePage() {
         </div>
         <div className="flex items-center gap-1.5">
           {visualModes.map((m) => (
-            <button key={m.value} type="button" className={`hidden rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:block ${visualMode === m.value ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"}`} onClick={() => setVisualMode(m.value)}>
+            <button key={m.value} type="button" className={`hidden rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:block ${visualMode === m.value ? "bg-primary/15 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`} onClick={() => setVisualMode(m.value)}>
               {m.label}
             </button>
           ))}
@@ -105,7 +105,7 @@ export default function GlobePage() {
                   <p className="text-sm font-semibold text-foreground">Navigator</p>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="text-xs font-medium">{filteredStakeholders.length}</Badge>
-                    <button type="button" onClick={() => setNavigatorOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                    <button type="button" onClick={() => setNavigatorOpen(false)} className="rounded-md p-1 text-muted-foreground transition hover:bg-muted/70 hover:text-foreground"><X className="h-4 w-4" /></button>
                   </div>
                 </div>
                 <div className="space-y-3 p-4">
@@ -115,14 +115,14 @@ export default function GlobePage() {
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {["all", ...stakeholderTypes.map((t) => t.value)].map((v) => (
-                      <button key={v} type="button" className={`rounded-md px-2 py-1 text-[11px] font-medium uppercase tracking-wider transition ${typeFilter === v ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"}`} onClick={() => setTypeFilter(v)}>{v}</button>
+                      <button key={v} type="button" className={`rounded-md px-2 py-1 text-[11px] font-medium uppercase tracking-wider transition ${typeFilter === v ? "bg-primary/15 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`} onClick={() => setTypeFilter(v)}>{v}</button>
                     ))}
                   </div>
                 </div>
                 <ScrollArea className="flex-1 px-3 pb-4">
                   {filteredStakeholders.length === 0 && <p className="px-2 py-8 text-center text-sm text-muted-foreground">No stakeholders yet.</p>}
                   {filteredStakeholders.map((s) => (
-                    <button key={s.id} type="button" className={`mb-1.5 w-full rounded-xl border p-3.5 text-left transition-all ${selected?.id === s.id ? "border-primary/30 bg-primary/5 glow-ring" : "border-transparent hover:bg-muted/40"}`} onClick={() => { setSelectedId(s.id); setProfileOpen(true); setNavigatorOpen(false); }}>
+                    <button key={s.id} type="button" className={`mb-1.5 w-full rounded-xl border p-3.5 text-left transition-all ${selected?.id === s.id ? "border-primary/30 bg-primary/5 glow-ring" : "border-transparent hover:bg-muted/60"}`} onClick={() => { setSelectedId(s.id); setProfileOpen(true); setNavigatorOpen(false); }}>
                       <p className="text-sm font-medium text-foreground">{s.name}</p>
                       <p className="text-xs text-muted-foreground">{s.organization}</p>
                       <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-muted-foreground"><MapPin className="h-3 w-3" /> {s.city}, {s.country}</div>
@@ -173,7 +173,7 @@ export default function GlobePage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="text-[10px] font-semibold uppercase">{selected.type}</Badge>
-                    <button type="button" onClick={() => setProfileOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                    <button type="button" onClick={() => setProfileOpen(false)} className="rounded-md p-1 text-muted-foreground transition hover:bg-muted/70 hover:text-foreground"><X className="h-4 w-4" /></button>
                   </div>
                 </div>
                 <div className="flex border-b border-border/30 px-4">
