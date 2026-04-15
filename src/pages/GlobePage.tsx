@@ -23,8 +23,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
-import { useProfile } from "@/hooks/use-profile";
-import { buildArcs, buildFeedPosts, buildInsights, buildStakeholders } from "@/lib/mock-stakeholders";
+import { useNetworkMembers } from "@/hooks/use-network-members";
+import { buildArcs, buildFeedPosts, buildInsights } from "@/lib/mock-stakeholders";
 import type { StakeholderType, VisualMode } from "@/types/sng";
 
 const stakeholderTypes: { value: StakeholderType; label: string }[] = [
