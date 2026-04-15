@@ -25,41 +25,6 @@ export const interestCatalog = [
   "Research",
 ];
 
-/** Build viewer stakeholder from authenticated profile */
-export function buildViewerStakeholder(profile: ProfileRecord): Stakeholder | null {
-  if (!profile.onboarding_completed || !profile.region) return null;
-
-  const regionMatch = regionOptions.find((o) => o.value === profile.region) ?? regionOptions[0];
-  const metricEntries = Object.entries(profile.impact_metrics ?? {}).filter(([, v]) => v);
-
-  return {
-    id: "viewer-profile",
-    name: profile.display_name || "You",
-    organization: profile.organization_name || "Independent",
-    type: profile.stakeholder_type || "other",
-    region: profile.region,
-    city: profile.city || regionMatch.city,
-    country: profile.region,
-    lat: regionMatch.lat,
-    lng: regionMatch.lng,
-    bio: profile.bio || "Your stakeholder profile.",
-    interests: profile.interests?.length ? profile.interests : [],
-    initiatives: profile.initiatives?.length ? profile.initiatives : [],
-    metrics: metricEntries.length
-      ? metricEntries.map(([label, value]) => ({ label, value: String(value) }))
-      : [{ label: "Status", value: "Active" }],
-    score: 95,
-    connections: [],
-    isViewer: true,
-  };
-}
-
-/** Returns only the authenticated user's stakeholder (no mock data) */
-export function buildStakeholders(profile: ProfileRecord | null): Stakeholder[] {
-  const viewer = profile ? buildViewerStakeholder(profile) : null;
-  return viewer ? [viewer] : [];
-}
-
 /** Build arcs from stakeholder connections */
 export function buildArcs(stakeholders: Stakeholder[]): ArcDatum[] {
   const byId = new Map(stakeholders.map((s) => [s.id, s]));
@@ -85,17 +50,40 @@ export function buildArcs(stakeholders: Stakeholder[]): ArcDatum[] {
 /** Generate contextual feed posts for a stakeholder */
 export function buildFeedPosts(stakeholder: Stakeholder): FeedPost[] {
   if (!stakeholder) return [];
-  return [
+  const timeLabels = ["Just now", "2h ago", "Yesterday", "3 days ago", "Last week"];
+  const categories = ["Opportunity", "Update", "Milestone", "Partnership", "Research"];
+
+  const posts: FeedPost[] = [
     {
       id: `${stakeholder.id}-feed-1`,
       title: `${stakeholder.organization} opened a collaboration window`,
       content: `${stakeholder.name} is seeking aligned partners around ${stakeholder.interests.slice(0, 2).join(" and ") || "innovation"}.`,
-      category: "Opportunity",
-      timestampLabel: "Recently",
-      likes: 0,
-      comments: 0,
+      category: categories[0],
+      timestampLabel: timeLabels[0],
+      likes: Math.floor(Math.random() * 24) + 3,
+      comments: Math.floor(Math.random() * 8),
+    },
+    {
+      id: `${stakeholder.id}-feed-2`,
+      title: `New impact milestone reached`,
+      content: `${stakeholder.organization} has reported significant progress in their ${stakeholder.initiatives[0] || "primary initiative"}.`,
+      category: categories[2],
+      timestampLabel: timeLabels[1],
+      likes: Math.floor(Math.random() * 40) + 10,
+      comments: Math.floor(Math.random() * 12) + 2,
+    },
+    {
+      id: `${stakeholder.id}-feed-3`,
+      title: `${stakeholder.name} shared a regional update`,
+      content: `Insights from the ${stakeholder.region} ecosystem on trends in ${stakeholder.interests[0] || "innovation"} and cross-sector collaboration.`,
+      category: categories[1],
+      timestampLabel: timeLabels[2],
+      likes: Math.floor(Math.random() * 18) + 5,
+      comments: Math.floor(Math.random() * 6) + 1,
     },
   ];
+
+  return posts;
 }
 
 /** Generate contextual AI insights for a stakeholder */
@@ -113,8 +101,22 @@ export function buildInsights(stakeholder: Stakeholder): InsightCard[] {
       id: `${stakeholder.id}-insight-2`,
       kind: "insight",
       title: "Network position analysis",
-      description: `This stakeholder is positioned in a growing corridor with emerging partnership signals.`,
+      description: `This stakeholder is positioned in a growing corridor with ${stakeholder.connections.length} active connections and emerging partnership signals.`,
       confidence: 81,
+    },
+    {
+      id: `${stakeholder.id}-insight-3`,
+      kind: "funding",
+      title: `Funding landscape in ${stakeholder.region}`,
+      description: `${stakeholder.region} shows increasing deal flow in ${stakeholder.interests.slice(0, 2).join(" and ") || "key sectors"} with growing institutional interest.`,
+      confidence: 76,
+    },
+    {
+      id: `${stakeholder.id}-insight-4`,
+      kind: "introduction",
+      title: `Warm introduction pathway identified`,
+      description: `Based on shared interests in ${stakeholder.interests[0] || "innovation"}, there are mutual connections that could facilitate an introduction.`,
+      confidence: 88,
     },
   ];
 }
