@@ -101,6 +101,80 @@ export type Database = {
         }
         Relationships: []
       }
+      network_members: {
+        Row: {
+          bio: string | null
+          city: string
+          connections: string[]
+          country: string
+          created_at: string
+          display_name: string
+          id: string
+          impact_metrics: Json
+          initiatives: string[]
+          interests: string[]
+          is_active: boolean
+          lat: number
+          lng: number
+          organization_name: string
+          profile_user_id: string | null
+          region: string
+          score: number
+          stakeholder_type: Database["public"]["Enums"]["stakeholder_type"]
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          city: string
+          connections?: string[]
+          country: string
+          created_at?: string
+          display_name: string
+          id?: string
+          impact_metrics?: Json
+          initiatives?: string[]
+          interests?: string[]
+          is_active?: boolean
+          lat: number
+          lng: number
+          organization_name?: string
+          profile_user_id?: string | null
+          region: string
+          score?: number
+          stakeholder_type?: Database["public"]["Enums"]["stakeholder_type"]
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          city?: string
+          connections?: string[]
+          country?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          impact_metrics?: Json
+          initiatives?: string[]
+          interests?: string[]
+          is_active?: boolean
+          lat?: number
+          lng?: number
+          organization_name?: string
+          profile_user_id?: string | null
+          region?: string
+          score?: number
+          stakeholder_type?: Database["public"]["Enums"]["stakeholder_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_members_profile_user_id_fkey"
+            columns: ["profile_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
