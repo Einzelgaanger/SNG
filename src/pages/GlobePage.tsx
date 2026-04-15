@@ -46,7 +46,7 @@ const visualModes: { value: VisualMode; label: string }[] = [
 
 export default function GlobePage() {
   const { user } = useAuth();
-  const { data: profile } = useProfile(user?.id);
+  const { data: stakeholders = [] } = useNetworkMembers(user?.id);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
@@ -59,7 +59,6 @@ export default function GlobePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "feed" | "ai">("profile");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const stakeholders = useMemo(() => buildStakeholders(profile ?? null), [profile]);
   const arcs = useMemo(() => buildArcs(stakeholders), [stakeholders]);
 
   const filteredStakeholders = useMemo(
