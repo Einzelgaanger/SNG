@@ -306,7 +306,7 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
               <p className="marketing-section-label">Capabilities</p>
-              <h2 className="font-display mt-5 text-4xl leading-[0.95] tracking-tight sm:text-5xl">
+              <h2 className="font-display mt-5 text-[clamp(2rem,7vw,3rem)] leading-[0.95] tracking-tight">
                 Six tools.
                 <br />
                 <em className="font-light text-primary">One atlas.</em>
@@ -365,7 +365,7 @@ export default function LandingPage() {
             </div>
             <div className="space-y-6 lg:col-span-5 lg:py-6">
               <p className="marketing-section-label">Intelligence</p>
-              <h2 className="font-display text-4xl leading-[0.95] tracking-tight sm:text-[3rem]">
+              <h2 className="font-display text-[clamp(2rem,7vw,3rem)] leading-[0.95] tracking-tight">
                 The signal hidden in <em className="font-light text-primary">the noise.</em>
               </h2>
               <p className="text-base leading-relaxed text-muted-foreground">
@@ -447,7 +447,7 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-12 lg:gap-14">
           <div className="space-y-6 lg:col-span-6">
             <p className="marketing-section-label">Impact</p>
-            <h2 className="font-display text-4xl leading-[0.95] tracking-tight sm:text-[3.5rem]">
+            <h2 className="font-display text-[clamp(2rem,8vw,3.5rem)] leading-[0.95] tracking-tight">
               Growth that <em className="font-light text-primary">takes root.</em>
             </h2>
             <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
