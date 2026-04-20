@@ -109,13 +109,20 @@ export default function MatchesPage() {
     <div className="app-page">
       <div className="app-container">
         <div className="app-header">
-          <div>
-            <h1 className="app-header-title flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" /> Matches
+          <div className="space-y-3">
+            <span className="eyebrow-primary">
+              <Sparkles className="h-3 w-3" /> Index 02 · Matches
+            </span>
+            <h1 className="app-header-title">
+              Your collaboration <em className="font-light text-primary">signal.</em>
             </h1>
             <p className="app-header-description">
               AI-powered partners based on shared interests, complementary roles, and cross-region opportunities.
             </p>
+          </div>
+          <div className="font-mono-display text-right text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="numeral text-3xl text-foreground">{matches.length}</p>
+            <p>candidates surfaced</p>
           </div>
         </div>
 
