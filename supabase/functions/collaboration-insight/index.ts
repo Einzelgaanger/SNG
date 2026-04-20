@@ -1,7 +1,12 @@
 // AI collaboration insights — uses Lovable AI Gateway (Gemini 3 Flash) to generate
 // a 2-sentence rationale for why two stakeholders should collaborate.
-import { corsHeaders } from "@supabase/supabase-js/cors";
 import { z } from "npm:zod@3.23.8";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
 
 const BodySchema = z.object({
   viewer: z.object({
