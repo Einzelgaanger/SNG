@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Globe2, LogOut, Menu, Settings, Sparkles, Users, X } from "lucide-react";
+import { Bell, Globe2, LogOut, Menu, Settings, Sparkles, Users, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LoadingScreen } from "@/components/auth/LoadingScreen";
@@ -10,10 +10,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useRoles } from "@/hooks/use-roles";
 import vggLogo from "@/assets/vgg-logo.webp";
+import { NotificationBell } from "@/components/sng/NotificationBell";
 
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },
   { path: "/app/matches", label: "Matches", icon: Sparkles, roles: ["user", "moderator", "admin"] },
+  { path: "/app/notifications", label: "Notifications", icon: Bell, roles: ["user", "moderator", "admin"] },
   { path: "/app/settings", label: "Settings", icon: Settings, roles: ["user", "moderator", "admin"] },
 ];
 
@@ -122,9 +124,12 @@ export default function DashboardLayout() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center justify-between border-b border-border/50 bg-card/90 px-4 backdrop-blur lg:hidden">
           <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
-            <Menu className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
         </header>
 
         {/* Mobile sidebar overlay */}
