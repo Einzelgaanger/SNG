@@ -27,6 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useNetworkMembers } from "@/hooks/use-network-members";
+import { useMatches } from "@/hooks/use-matches";
 import { buildArcs, buildFeedPosts, buildInsights } from "@/lib/mock-stakeholders";
 import type { StakeholderType, VisualMode } from "@/types/sng";
 
