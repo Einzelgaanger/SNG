@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Bell,
   Briefcase,
   Check,
   Globe2,
@@ -8,6 +9,7 @@ import {
   MapPin,
   Phone,
   Save,
+  Sparkles,
   User,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -15,10 +17,21 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useRoles } from "@/hooks/use-roles";
+import { usePreferences } from "@/hooks/use-preferences";
+import { proximityOptions, type ProximityRadius } from "@/lib/preferences-store";
 import { interestCatalog, regionOptions } from "@/lib/mock-stakeholders";
 import type { StakeholderType } from "@/types/sng";
 
@@ -36,6 +49,7 @@ export default function ProfileSettings() {
   const { user } = useAuth();
   const { data: profile, updateProfile, isSaving } = useProfile(user?.id);
   const { roles } = useRoles(user?.id);
+  const { prefs, update: updatePrefs } = usePreferences();
 
   const [displayName, setDisplayName] = useState("");
   const [organizationName, setOrganizationName] = useState("");
@@ -243,6 +257,108 @@ export default function ProfileSettings() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* Notification Preferences */}
+        <section className="surface-card space-y-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Bell className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-medium text-foreground">Notification Preferences</h2>
+              <p className="text-xs text-muted-foreground">
+                Control which alerts surface in your feed and how local they should be.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-foreground">Minimum match score</p>
+                <p className="text-xs text-muted-foreground">
+                  Only notify me about matches at or above this score.
+                </p>
+              </div>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+                {prefs.minMatchScore}%
+              </span>
+            </div>
+            <Slider
+              value={[prefs.minMatchScore]}
+              min={0}
+              max={100}
+              step={5}
+              onValueChange={(v) => updatePrefs({ minMatchScore: v[0] })}
+              className="pt-2"
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-border/40 bg-muted/30 px-3 py-3">
+            <div>
+              <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                <MapPin className="h-3.5 w-3.5 text-primary" /> Proximity radius
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {proximityOptions.find((p) => p.value === prefs.proximity)?.description}
+              </p>
+            </div>
+            <Select
+              value={prefs.proximity}
+              onValueChange={(v) => updatePrefs({ proximity: v as ProximityRadius })}
+            >
+              <SelectTrigger className="h-9 w-[140px] border-border/50 bg-card text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {proximityOptions.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-3 py-3">
+              <div>
+                <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" /> New match alerts
+                </p>
+                <p className="text-xs text-muted-foreground">When stakeholders match your filters.</p>
+              </div>
+              <Switch
+                checked={prefs.notifyNewMatches}
+                onCheckedChange={(v) => updatePrefs({ notifyNewMatches: v })}
+              />
+            </label>
+            <label className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-3 py-3">
+              <div>
+                <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                  <Globe2 className="h-3.5 w-3.5 text-primary" /> Location overlap
+                </p>
+                <p className="text-xs text-muted-foreground">When a strong match is in your region.</p>
+              </div>
+              <Switch
+                checked={prefs.notifyLocationOverlap}
+                onCheckedChange={(v) => updatePrefs({ notifyLocationOverlap: v })}
+              />
+            </label>
+            <label className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-3 py-3">
+              <div>
+                <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                  <User className="h-3.5 w-3.5 text-primary" /> Profile tips
+                </p>
+                <p className="text-xs text-muted-foreground">Suggestions to strengthen your profile.</p>
+              </div>
+              <Switch
+                checked={prefs.notifyProfileTips}
+                onCheckedChange={(v) => updatePrefs({ notifyProfileTips: v })}
+              />
+            </label>
+          </div>
         </section>
 
         <section className="surface-card space-y-4">
