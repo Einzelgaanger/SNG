@@ -51,7 +51,13 @@ const visualModes: { value: VisualMode; label: string }[] = [
 export default function GlobePage() {
   const { user } = useAuth();
   const { data: stakeholders = [] } = useNetworkMembers(user?.id);
-  const { has: isConn, toggle: toggleConn, count: connCount } = useConnections();
+  const { data: matches = [] } = useMatches(user?.id, 60);
+  const { has: isConn, toggle: toggleConn, count: connCount, ids: connIds } = useConnections();
+  const connectedSet = useMemo(() => new Set(connIds), [connIds]);
+  const highMatchSet = useMemo(
+    () => new Set(matches.filter((m) => m.match_score >= 70).map((m) => m.member_id)),
+    [matches],
+  );
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
