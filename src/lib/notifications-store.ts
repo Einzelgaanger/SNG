@@ -1,8 +1,6 @@
-// Demo notifications store — persists "read" state in localStorage.
-// Notifications are *derived* from matches + connections + profile, so the feed
-// always reflects the live database without needing a notifications table.
-
-const READ_KEY = "sng:notifications:read:v1";
+// Notification helpers — read state is now persisted in the database
+// via `useNotificationReads`. This module just exposes the type and the
+// relative-time formatter (still used everywhere).
 
 export type NotificationKind =
   | "new_match"
@@ -20,40 +18,6 @@ export interface AppNotification {
   ts: number; // ms epoch (used for sort + relative time)
   link?: string;
   meta?: Record<string, string | number>;
-}
-
-function readSet(): Set<string> {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(READ_KEY) || "[]"));
-  } catch {
-    return new Set();
-  }
-}
-
-function writeSet(s: Set<string>) {
-  localStorage.setItem(READ_KEY, JSON.stringify(Array.from(s)));
-  window.dispatchEvent(new CustomEvent("sng:notifications-read-changed"));
-}
-
-export function getReadIds(): Set<string> {
-  return readSet();
-}
-
-export function markRead(id: string) {
-  const s = readSet();
-  s.add(id);
-  writeSet(s);
-}
-
-export function markAllRead(ids: string[]) {
-  const s = readSet();
-  ids.forEach((id) => s.add(id));
-  writeSet(s);
-}
-
-export function subscribeRead(cb: () => void) {
-  window.addEventListener("sng:notifications-read-changed", cb);
-  return () => window.removeEventListener("sng:notifications-read-changed", cb);
 }
 
 export function relativeTime(ts: number): string {

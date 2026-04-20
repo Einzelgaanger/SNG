@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/use-notifications";
-import { markRead, relativeTime } from "@/lib/notifications-store";
+import { relativeTime } from "@/lib/notifications-store";
 
 export function NotificationBell() {
   const navigate = useNavigate();
-  const { notifications, readIds, unreadCount } = useNotifications();
+  const { notifications, readIds, unreadCount, markRead } = useNotifications();
   const recent = notifications.slice(0, 5);
 
   return (

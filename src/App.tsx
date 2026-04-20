@@ -13,6 +13,7 @@ import DashboardLayout from "./components/dashboard/DashboardLayout";
 import GlobePage from "./pages/GlobePage";
 import MatchesPage from "./pages/MatchesPage";
 import MyNetworkPage from "./pages/MyNetworkPage";
+import ActivityFeedPage from "./pages/ActivityFeedPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfileSettings from "./pages/ProfileSettings";
 import AdminUsers from "./pages/AdminUsers";
@@ -36,6 +37,7 @@ const App = () => (
               <Route index element={<GlobePage />} />
               <Route path="matches" element={<MatchesPage />} />
               <Route path="network" element={<MyNetworkPage />} />
+              <Route path="feed" element={<ActivityFeedPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="settings" element={<ProfileSettings />} />
               <Route path="admin/users" element={<AdminUsers />} />

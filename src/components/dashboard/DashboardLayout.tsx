@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Bell, Globe2, LogOut, Menu, Settings, Sparkles, Users, Users2, X } from "lucide-react";
+import { Bell, Globe2, LogOut, Menu, MessageSquare, Settings, Sparkles, Users, Users2, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LoadingScreen } from "@/components/auth/LoadingScreen";
@@ -15,6 +15,7 @@ import { NotificationBell } from "@/components/sng/NotificationBell";
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },
   { path: "/app/matches", label: "Matches", icon: Sparkles, roles: ["user", "moderator", "admin"] },
+  { path: "/app/feed", label: "Activity Feed", icon: MessageSquare, roles: ["user", "moderator", "admin"] },
   { path: "/app/network", label: "My Network", icon: Users2, roles: ["user", "moderator", "admin"] },
   { path: "/app/notifications", label: "Notifications", icon: Bell, roles: ["user", "moderator", "admin"] },
   { path: "/app/settings", label: "Settings", icon: Settings, roles: ["user", "moderator", "admin"] },

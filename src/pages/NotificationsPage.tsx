@@ -15,8 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications } from "@/hooks/use-notifications";
 import {
   AppNotification,
-  markAllRead,
-  markRead,
   relativeTime,
 } from "@/lib/notifications-store";
 
@@ -39,7 +37,7 @@ function iconFor(kind: AppNotification["kind"]) {
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
-  const { notifications, readIds, unreadCount } = useNotifications();
+  const { notifications, readIds, unreadCount, markRead, markAllRead } = useNotifications();
 
   return (
     <div className="app-page">
