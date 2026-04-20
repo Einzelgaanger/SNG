@@ -14,8 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
-import { useMatches } from "@/hooks/use-matches";
+import { useMatches, type MatchRow } from "@/hooks/use-matches";
 import { useConnections } from "@/hooks/use-connections";
+import { MatchProfileDialog } from "@/components/sng/MatchProfileDialog";
 import type { StakeholderType } from "@/types/sng";
 
 const typeColor: Record<string, string> = {
