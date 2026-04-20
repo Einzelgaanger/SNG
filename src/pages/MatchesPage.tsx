@@ -97,6 +97,38 @@ export default function MatchesPage() {
             />
           </div>
 
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-1.5">
+              {stakeholderFilters.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                    typeFilter === f.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                  }`}
+                  onClick={() => setTypeFilter(f.value)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortKey)}>
+                <SelectTrigger className="h-9 w-[160px] border-border/50 bg-card/50 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="score">Match score</SelectItem>
+                  <SelectItem value="name">Name (A→Z)</SelectItem>
+                  <SelectItem value="region">Region</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           {isLoading && (
             <div className="flex items-center justify-center py-16 text-muted-foreground">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Finding your matches…
