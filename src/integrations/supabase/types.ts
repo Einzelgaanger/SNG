@@ -305,6 +305,56 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      find_matches: {
+        Args: { _limit?: number; _user_id: string }
+        Returns: {
+          bio: string
+          city: string
+          country: string
+          display_name: string
+          interests: string[]
+          lat: number
+          lng: number
+          match_reasons: string[]
+          match_score: number
+          member_id: string
+          organization_name: string
+          region: string
+          score: number
+          shared_interests: string[]
+          stakeholder_type: Database["public"]["Enums"]["stakeholder_type"]
+        }[]
+      }
+      get_globe_sample: {
+        Args: { _limit?: number; _viewer_id?: string }
+        Returns: {
+          bio: string | null
+          city: string
+          connections: string[]
+          country: string
+          created_at: string
+          display_name: string
+          id: string
+          impact_metrics: Json
+          initiatives: string[]
+          interests: string[]
+          is_active: boolean
+          lat: number
+          lng: number
+          organization_name: string
+          profile_user_id: string | null
+          region: string
+          score: number
+          stakeholder_type: Database["public"]["Enums"]["stakeholder_type"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "network_members"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -329,6 +379,8 @@ export type Database = {
           read_ct: number
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
