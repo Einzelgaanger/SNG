@@ -213,7 +213,10 @@ export default function MatchesPage() {
                       size="sm"
                       variant={connected ? "secondary" : "default"}
                       className="mt-3 w-full"
-                      onClick={() => handleConnect(m.member_id, m.display_name)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleConnect(m.member_id, m.display_name);
+                      }}
                     >
                       {connected ? (
                         <>
@@ -232,6 +235,12 @@ export default function MatchesPage() {
           </ScrollArea>
         </div>
       </div>
+
+      <MatchProfileDialog
+        match={openMatch}
+        open={Boolean(openMatch)}
+        onOpenChange={(o) => !o && setOpenMatch(null)}
+      />
     </div>
   );
 }
