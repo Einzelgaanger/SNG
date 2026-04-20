@@ -88,23 +88,38 @@ export default function GlobePage() {
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-background">
       {/* Top toolbar */}
-      <div className="relative z-20 flex items-center justify-between border-b border-border/40 bg-card/70 px-2 py-2 backdrop-blur-md sm:px-4">
-        <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
+      <div className="relative z-20 flex items-center justify-between border-b border-border bg-card px-3 py-2 sm:px-4">
+        <div className="font-mono-display hidden items-center gap-3 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
+          <span className="text-foreground">◉ Live</span>
+          <span className="text-border">·</span>
           <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
-          <span>{arcs.length} connection{arcs.length !== 1 ? "s" : ""}</span>
+          <span>{arcs.length} arc{arcs.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
-          <span className="text-primary">{connCount} in your network</span>
+          <span className="text-primary">{connCount} in network</span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {visualModes.map((m) => (
-            <button key={m.value} type="button" className={`hidden rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:block ${visualMode === m.value ? "bg-primary/15 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`} onClick={() => setVisualMode(m.value)}>
+            <button
+              key={m.value}
+              type="button"
+              className={`font-mono-display hidden rounded-sm px-2.5 py-1.5 text-[10.5px] uppercase tracking-[0.18em] transition sm:block ${
+                visualMode === m.value
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:bg-paper-deep/60 hover:text-foreground"
+              }`}
+              onClick={() => setVisualMode(m.value)}
+            >
               {m.label}
             </button>
           ))}
-          <Separator orientation="vertical" className="mx-1 h-5 hidden sm:block" />
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setNavigatorOpen((v) => !v)}><LayoutPanelLeft className="h-4 w-4" /></Button>
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => { if (selected) setProfileOpen((v) => !v); }}><UserRound className="h-4 w-4" /></Button>
+          <Separator orientation="vertical" className="mx-1 hidden h-5 sm:block" />
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-sm" onClick={() => setNavigatorOpen((v) => !v)}>
+            <LayoutPanelLeft className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-sm" onClick={() => { if (selected) setProfileOpen((v) => !v); }}>
+            <UserRound className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
