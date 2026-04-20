@@ -15,6 +15,8 @@ interface GlobeSceneProps {
   showConnections: boolean;
   showCountries: boolean;
   stakeholders: Stakeholder[];
+  connectedIds?: Set<string>;
+  highMatchIds?: Set<string>;
   onSelect: (stakeholder: Stakeholder) => void;
 }
 
@@ -28,6 +30,8 @@ function GlobeObject({
   showConnections,
   showCountries,
   stakeholders,
+  connectedIds,
+  highMatchIds,
 }: GlobeSceneProps) {
   const groupRef = useRef<THREE.Group>(null);
   const earthDay = useTexture("/globe/earth-blue-marble.jpg");
@@ -36,7 +40,8 @@ function GlobeObject({
 
   useFrame((_state, delta) => {
     if (autoRotate && groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.12;
+      // Blueprint spec: subtle 0.1 deg/sec auto-rotation
+      groupRef.current.rotation.y += delta * 0.018;
     }
   });
 
@@ -62,20 +67,24 @@ function GlobeObject({
     [visibleArcs],
   );
 
-  // Updated color palette: amber primary, teal accent
-  const markerColor = "#e8a838";
-  const markerSelected = "#38bdf8";
-  const markerViewer = "#f59e0b";
+  // VGG brand palette per blueprint:
+  // viewer = green #4DB848, connected = blue #2E86C1, others = soft slate, selected = bright cyan, high-match = gold ring
+  const COLOR_VIEWER = "#4DB848";
+  const COLOR_CONNECTED = "#2E86C1";
+  const COLOR_DEFAULT = "#94a3b8";
+  const COLOR_SELECTED = "#22d3ee";
+  const COLOR_HEATMAP = "#f97316";
+  const COLOR_HIGH_MATCH_RING = "#f5b400";
 
   const materialConfig = {
-    color: mode === "simple" ? "#0f1729" : undefined,
-    emissive: nightLights ? new THREE.Color(markerColor) : new THREE.Color("#000000"),
-    emissiveIntensity: nightLights ? 0.1 : 0,
+    color: mode === "simple" ? "#0b1220" : undefined,
+    emissive: nightLights ? new THREE.Color("#1e3a5f") : new THREE.Color("#000000"),
+    emissiveIntensity: nightLights ? 0.15 : 0,
     map: mode === "simple" ? null : mode === "satellite" || nightLights ? earthNight : earthDay,
     bumpMap: mode === "simple" ? null : bump,
-    bumpScale: mode === "simple" ? 0 : 2.4,
-    metalness: 0.08,
-    roughness: 0.88,
+    bumpScale: mode === "simple" ? 0 : mode === "satellite" ? 3.2 : 2.4,
+    metalness: mode === "satellite" ? 0.18 : 0.08,
+    roughness: mode === "satellite" ? 0.78 : 0.88,
   };
 
   return (
@@ -84,31 +93,60 @@ function GlobeObject({
         <meshStandardMaterial {...materialConfig} />
       </Sphere>
 
+      {/* Atmospheric halo — skip in simple mode for performance */}
+      {mode !== "simple" && (
+        <Sphere args={[GLOBE_RADIUS + 4, 48, 48]}>
+          <meshBasicMaterial color={mode === "satellite" ? "#60a5fa" : "#4DB848"} transparent opacity={0.06} side={THREE.BackSide} />
+        </Sphere>
+      )}
+
       {showCountries && (
         <Sphere args={[GLOBE_RADIUS + 0.6, 32, 32]}>
-          <meshBasicMaterial color="hsl(40, 20%, 96%)" opacity={0.06} transparent wireframe />
+          <meshBasicMaterial color={mode === "satellite" ? "#bae6fd" : "#4DB848"} opacity={0.08} transparent wireframe />
         </Sphere>
       )}
 
       {lineSegments.map((segment) => (
-        <Line key={segment.id} points={segment.points} color={segment.color} lineWidth={1.2} transparent opacity={0.45} />
+        <Line key={segment.id} points={segment.points} color={segment.color} lineWidth={1.2} transparent opacity={0.5} />
       ))}
 
       {stakeholders.map((stakeholder) => {
-        const position = latLngToVector3(stakeholder.lat, stakeholder.lng, GLOBE_RADIUS + (mode === "heatmap" ? 4.5 : 3.2));
+        const elevation = mode === "heatmap" ? 4.5 : 3.2;
+        const position = latLngToVector3(stakeholder.lat, stakeholder.lng, GLOBE_RADIUS + elevation);
         const selected = stakeholder.id === selectedId;
-        const scale = selected ? 1.7 : stakeholder.isViewer ? 1.35 : 1;
+        const isConnected = connectedIds?.has(stakeholder.id);
+        const isHighMatch = highMatchIds?.has(stakeholder.id);
+        const scale = selected ? 1.7 : stakeholder.isViewer ? 1.45 : isConnected ? 1.2 : 1;
+
+        const baseColor = stakeholder.isViewer
+          ? COLOR_VIEWER
+          : selected
+            ? COLOR_SELECTED
+            : isConnected
+              ? COLOR_CONNECTED
+              : mode === "heatmap"
+                ? COLOR_HEATMAP
+                : COLOR_DEFAULT;
+
+        const radius = mode === "heatmap" ? 2.8 * scale : 1.9 * scale;
 
         return (
           <group key={stakeholder.id} position={position}>
+            {/* Gold ring for high-match stakeholders (blueprint Spec 4.4) */}
+            {isHighMatch && !stakeholder.isViewer && (
+              <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[radius * 1.8, radius * 2.4, 32]} />
+                <meshBasicMaterial color={COLOR_HIGH_MATCH_RING} transparent opacity={0.85} side={THREE.DoubleSide} />
+              </mesh>
+            )}
             <mesh onClick={() => onSelect(stakeholder)}>
-              <sphereGeometry args={[mode === "heatmap" ? 2.8 * scale : 1.9 * scale, 18, 18]} />
+              <sphereGeometry args={[radius, 18, 18]} />
               <meshStandardMaterial
-                color={stakeholder.isViewer ? markerViewer : selected ? markerSelected : mode === "heatmap" ? "#f472b6" : markerColor}
-                emissive={stakeholder.isViewer ? markerViewer : selected ? markerSelected : markerColor}
-                emissiveIntensity={selected ? 0.85 : 0.35}
+                color={baseColor}
+                emissive={baseColor}
+                emissiveIntensity={selected ? 0.95 : stakeholder.isViewer ? 0.7 : isConnected ? 0.55 : 0.3}
                 transparent
-                opacity={mode === "heatmap" ? 0.66 : 0.95}
+                opacity={mode === "heatmap" ? 0.7 : 0.95}
               />
             </mesh>
             {selected && (
@@ -126,15 +164,16 @@ function GlobeObject({
 }
 
 export function GlobeScene(props: GlobeSceneProps) {
+  const bgColor = props.mode === "satellite" ? "#000814" : "#080d1a";
   return (
     <div className="h-full w-full overflow-hidden rounded-none">
       <Canvas camera={{ position: [0, 0, 260], fov: 38 }}>
-        <color attach="background" args={["#080d1a"]} />
-        <fog attach="fog" args={["#080d1a", 240, 420]} />
-        <ambientLight intensity={1.1} />
-        <directionalLight position={[220, 120, 160]} intensity={1.6} />
+        <color attach="background" args={[bgColor]} />
+        <fog attach="fog" args={[bgColor, 240, 420]} />
+        <ambientLight intensity={props.mode === "satellite" ? 0.85 : 1.1} />
+        <directionalLight position={[220, 120, 160]} intensity={props.mode === "satellite" ? 2.1 : 1.6} />
         <Suspense fallback={null}>
-          <Stars radius={300} depth={80} count={2500} factor={3} saturation={0.1} fade speed={0.3} />
+          <Stars radius={300} depth={80} count={props.mode === "simple" ? 800 : 2500} factor={3} saturation={0.1} fade speed={0.3} />
           <GlobeObject {...props} />
         </Suspense>
         <OrbitControls enablePan={false} minDistance={180} maxDistance={340} autoRotate={false} />

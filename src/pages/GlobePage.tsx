@@ -27,6 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { useNetworkMembers } from "@/hooks/use-network-members";
+import { useMatches } from "@/hooks/use-matches";
 import { buildArcs, buildFeedPosts, buildInsights } from "@/lib/mock-stakeholders";
 import type { StakeholderType, VisualMode } from "@/types/sng";
 
@@ -50,7 +51,13 @@ const visualModes: { value: VisualMode; label: string }[] = [
 export default function GlobePage() {
   const { user } = useAuth();
   const { data: stakeholders = [] } = useNetworkMembers(user?.id);
-  const { has: isConn, toggle: toggleConn, count: connCount } = useConnections();
+  const { data: matches = [] } = useMatches(user?.id, 60);
+  const { has: isConn, toggle: toggleConn, count: connCount, ids: connIds } = useConnections();
+  const connectedSet = useMemo(() => new Set(connIds), [connIds]);
+  const highMatchSet = useMemo(
+    () => new Set(matches.filter((m) => m.match_score >= 70).map((m) => m.member_id)),
+    [matches],
+  );
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
@@ -140,7 +147,7 @@ export default function GlobePage() {
         </AnimatePresence>
 
         <div className="relative flex-1">
-          <GlobeScene arcs={arcs} autoRotate={autoRotate} mode={visualMode} nightLights={nightLights} selectedId={selected?.id ?? null} showConnections={showConnections} showCountries={showCountries} stakeholders={filteredStakeholders} onSelect={(s) => { setSelectedId(s.id); setProfileOpen(true); }} />
+          <GlobeScene arcs={arcs} autoRotate={autoRotate} mode={visualMode} nightLights={nightLights} selectedId={selected?.id ?? null} showConnections={showConnections} showCountries={showCountries} stakeholders={filteredStakeholders} connectedIds={connectedSet} highMatchIds={highMatchSet} onSelect={(s) => { setSelectedId(s.id); setProfileOpen(true); }} />
 
           <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-center gap-2">
             {[
