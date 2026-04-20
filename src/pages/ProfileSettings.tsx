@@ -48,6 +48,8 @@ export default function ProfileSettings() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [phone, setPhone] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
+  const [initiatives, setInitiatives] = useState<string[]>([]);
+  const [newInitiative, setNewInitiative] = useState("");
   const [fundingUsd, setFundingUsd] = useState("");
   const [peopleReached, setPeopleReached] = useState("");
   const [annualBudget, setAnnualBudget] = useState("");
@@ -65,6 +67,7 @@ export default function ProfileSettings() {
       setWebsiteUrl(profile.website_url || "");
       setPhone(profile.phone || "");
       setInterests(profile.interests || []);
+      setInitiatives(profile.initiatives || []);
       const im = profile.impact_metrics as Record<string, string | number | undefined> | undefined;
       setFundingUsd(String(im?.fundingUsd || ""));
       setPeopleReached(String(im?.peopleReached || ""));
@@ -87,6 +90,7 @@ export default function ProfileSettings() {
         website_url: websiteUrl || null,
         phone: phone || null,
         interests,
+        initiatives,
         impact_metrics: {
           fundingUsd: fundingUsd || null,
           peopleReached: peopleReached || null,
