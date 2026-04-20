@@ -4,23 +4,42 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMatches } from "@/hooks/use-matches";
 import { useProfile } from "@/hooks/use-profile";
 import { useConnections } from "@/hooks/use-connections";
+import { usePreferences } from "@/hooks/use-preferences";
 import {
   AppNotification,
   getReadIds,
   subscribeRead,
 } from "@/lib/notifications-store";
+import type { ProximityRadius } from "@/lib/preferences-store";
+import type { MatchRow } from "@/hooks/use-matches";
+import type { ProfileRecord } from "@/types/sng";
 
 const HOUR = 60 * 60 * 1000;
 
+/** Returns true if the match falls inside the user's proximity preference. */
+function withinProximity(
+  m: MatchRow,
+  profile: ProfileRecord | null | undefined,
+  radius: ProximityRadius,
+): boolean {
+  if (!profile || radius === "global" || radius === "continent") return true;
+  if (radius === "region") return m.region === profile.region;
+  if (radius === "country") return m.country === profile.country;
+  if (radius === "city") return m.city === profile.city;
+  return true;
+}
+
 /**
  * Derives a live notification feed from the user's matches, profile completeness,
- * and connections. Demo-grade: no DB writes, but reflects real data.
+ * and connections. Honors the user's notification preferences (min score, proximity,
+ * channel toggles).
  */
 export function useNotifications() {
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const { data: matches = [] } = useMatches(user?.id, 60);
   const { ids: connectedIds } = useConnections();
+  const { prefs } = usePreferences();
 
   const [readIds, setReadIds] = useState<Set<string>>(() => getReadIds());
   useEffect(() => subscribeRead(() => setReadIds(getReadIds())), []);
@@ -29,7 +48,7 @@ export function useNotifications() {
     const list: AppNotification[] = [];
     const now = Date.now();
 
-    // 1) Welcome
+    // 1) Welcome — always shown
     if (profile) {
       list.push({
         id: "welcome",
@@ -41,26 +60,32 @@ export function useNotifications() {
       });
     }
 
-    // 2) Top matches → "new match" alerts
-    matches.slice(0, 5).forEach((m, idx) => {
-      list.push({
-        id: `match:${m.member_id}`,
-        kind: m.match_score >= 70 ? "new_match" : "cross_region",
-        title:
-          m.match_score >= 70
-            ? `${m.display_name} is a strong match (${m.match_score}%)`
-            : `Cross-region opportunity: ${m.display_name}`,
-        body:
-          m.match_reasons[0] ||
-          `${m.organization_name} · ${m.city}, ${m.region}`,
-        ts: now - (2 + idx * 7) * HOUR,
-        link: "/app/matches",
-        meta: { score: m.match_score },
+    // 2) New match alerts (filtered by min score + proximity)
+    if (prefs.notifyNewMatches) {
+      const eligible = matches
+        .filter((m) => m.match_score >= prefs.minMatchScore)
+        .filter((m) => withinProximity(m, profile, prefs.proximity))
+        .slice(0, 5);
+      eligible.forEach((m, idx) => {
+        list.push({
+          id: `match:${m.member_id}`,
+          kind: m.match_score >= 70 ? "new_match" : "cross_region",
+          title:
+            m.match_score >= 70
+              ? `${m.display_name} is a strong match (${m.match_score}%)`
+              : `Cross-region opportunity: ${m.display_name}`,
+          body:
+            m.match_reasons[0] ||
+            `${m.organization_name} · ${m.city}, ${m.region}`,
+          ts: now - (2 + idx * 7) * HOUR,
+          link: "/app/matches",
+          meta: { score: m.match_score },
+        });
       });
-    });
+    }
 
-    // 3) Location overlap — anyone in your region with high match
-    if (profile?.region) {
+    // 3) Location overlap
+    if (prefs.notifyLocationOverlap && profile?.region) {
       const local = matches.find(
         (m) => m.region === profile.region && m.match_score >= 60,
       );
@@ -76,7 +101,7 @@ export function useNotifications() {
       }
     }
 
-    // 4) Connection confirmations
+    // 4) Connection confirmations — always shown (they reflect real user actions)
     connectedIds.slice(0, 3).forEach((id, idx) => {
       const m = matches.find((x) => x.member_id === id);
       list.push({
@@ -87,12 +112,12 @@ export function useNotifications() {
           ? `${m.organization_name} · ${m.city}`
           : "View your network on the globe.",
         ts: now - (1 + idx * 4) * HOUR,
-        link: "/app",
+        link: "/app/network",
       });
     });
 
     // 5) Profile strength alert
-    if (profile) {
+    if (prefs.notifyProfileTips && profile) {
       const fields = [
         profile.bio,
         profile.organization_name,
@@ -120,7 +145,7 @@ export function useNotifications() {
     }
 
     return list.sort((a, b) => b.ts - a.ts);
-  }, [profile, matches, connectedIds]);
+  }, [profile, matches, connectedIds, prefs]);
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !readIds.has(n.id)).length,

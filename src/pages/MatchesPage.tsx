@@ -1,5 +1,15 @@
 import { useMemo, useState } from "react";
-import { Globe2, Loader2, MapPin, Search, Sparkles, UserPlus, UserCheck, ArrowUpDown } from "lucide-react";
+import {
+  ArrowUpDown,
+  Globe2,
+  Loader2,
+  MapPin,
+  Rocket,
+  Search,
+  Sparkles,
+  UserCheck,
+  UserPlus,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -13,11 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/use-auth";
 import { useMatches, type MatchRow } from "@/hooks/use-matches";
 import { useConnections } from "@/hooks/use-connections";
+import { useProfile } from "@/hooks/use-profile";
+import { usePreferences } from "@/hooks/use-preferences";
+import { proximityOptions, type ProximityRadius } from "@/lib/preferences-store";
 import { MatchProfileDialog } from "@/components/sng/MatchProfileDialog";
-import type { StakeholderType } from "@/types/sng";
+import type { ProfileRecord, StakeholderType } from "@/types/sng";
 
 const typeColor: Record<string, string> = {
   entrepreneur: "bg-primary/10 text-primary",
@@ -41,19 +55,36 @@ const stakeholderFilters: { value: StakeholderType | "all"; label: string }[] = 
 
 type SortKey = "score" | "name" | "region";
 
+function inRadius(m: MatchRow, profile: ProfileRecord | null | undefined, r: ProximityRadius) {
+  if (!profile || r === "global" || r === "continent") return true;
+  if (r === "region") return m.region === profile.region;
+  if (r === "country") return m.country === profile.country;
+  if (r === "city") return m.city === profile.city;
+  return true;
+}
+
 export default function MatchesPage() {
   const { user } = useAuth();
+  const { data: profile } = useProfile(user?.id);
   const { data: matches = [], isLoading } = useMatches(user?.id, 60);
   const { has, toggle } = useConnections();
+  const { prefs } = usePreferences();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<StakeholderType | "all">("all");
   const [sortBy, setSortBy] = useState<SortKey>("score");
   const [openMatch, setOpenMatch] = useState<MatchRow | null>(null);
+  const [nearMe, setNearMe] = useState(false);
+  const [nearMeRadius, setNearMeRadius] = useState<ProximityRadius>(prefs.proximity);
+  const [activeOnly, setActiveOnly] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     const list = matches.filter((m) => {
       if (typeFilter !== "all" && m.stakeholder_type !== typeFilter) return false;
+      if (nearMe && !inRadius(m, profile, nearMeRadius)) return false;
+      // Active initiative filter — proxy via "shared interests > 0" since the
+      // match RPC already returns shared_interests for collaboration overlap.
+      if (activeOnly && (m.shared_interests?.length || 0) === 0) return false;
       if (!q) return true;
       return (
         m.display_name.toLowerCase().includes(q) ||
@@ -67,7 +98,7 @@ export default function MatchesPage() {
     if (sortBy === "name") sorted.sort((a, b) => a.display_name.localeCompare(b.display_name));
     if (sortBy === "region") sorted.sort((a, b) => a.region.localeCompare(b.region));
     return sorted;
-  }, [matches, search, typeFilter, sortBy]);
+  }, [matches, search, typeFilter, sortBy, nearMe, nearMeRadius, activeOnly, profile]);
 
   const handleConnect = (id: string, name: string) => {
     const nowConnected = toggle(id);
@@ -131,6 +162,40 @@ export default function MatchesPage() {
             </div>
           </div>
 
+          {/* Advanced filters row */}
+          <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/40 bg-muted/30 px-3 py-2.5">
+            <label className="flex items-center gap-2 text-xs text-foreground">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
+              <span>Near me</span>
+              <Switch checked={nearMe} onCheckedChange={setNearMe} />
+            </label>
+            {nearMe && (
+              <Select value={nearMeRadius} onValueChange={(v) => setNearMeRadius(v as ProximityRadius)}>
+                <SelectTrigger className="h-8 w-[140px] border-border/50 bg-card text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {proximityOptions
+                    .filter((p) => p.value !== "continent" && p.value !== "global")
+                    .map((p) => (
+                      <SelectItem key={p.value} value={p.value}>
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            )}
+            <span className="h-4 w-px bg-border/60" />
+            <label className="flex items-center gap-2 text-xs text-foreground">
+              <Rocket className="h-3.5 w-3.5 text-primary" />
+              <span>With overlapping initiatives</span>
+              <Switch checked={activeOnly} onCheckedChange={setActiveOnly} />
+            </label>
+            <span className="ml-auto text-[11px] text-muted-foreground">
+              {filtered.length} of {matches.length} matches
+            </span>
+          </div>
+
           {isLoading && (
             <div className="flex items-center justify-center py-16 text-muted-foreground">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Finding your matches…
@@ -143,7 +208,7 @@ export default function MatchesPage() {
               <p className="text-sm text-muted-foreground">
                 {matches.length === 0
                   ? "Complete your profile interests to unlock matches."
-                  : "No matches for that search."}
+                  : "No matches for the current filters."}
               </p>
             </div>
           )}
