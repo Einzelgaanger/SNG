@@ -175,18 +175,18 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border mesh-hero">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:pb-28 lg:pt-24">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-14 pt-10 sm:gap-10 sm:px-8 sm:pb-20 sm:pt-16 lg:grid-cols-12 lg:gap-12 lg:pb-28 lg:pt-24">
           {/* Eyebrow column */}
           <motion.div
             initial="hidden"
             animate="visible"
-            className="space-y-9 lg:col-span-7"
+            className="space-y-6 sm:space-y-9 lg:col-span-7"
           >
-            <motion.div custom={0} variants={fadeUp} className="flex items-center gap-3">
+            <motion.div custom={0} variants={fadeUp} className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="marketing-section-label">
                 <Sparkles className="mr-1 h-3 w-3" /> Stakeholder Network Globe
               </span>
-              <span className="font-mono-display text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="font-mono-display text-[10px] uppercase tracking-[0.22em] text-muted-foreground sm:text-[10.5px]">
                 Index No. 001 / 2026
               </span>
             </motion.div>
@@ -194,7 +194,7 @@ export default function LandingPage() {
             <motion.h1
               custom={1}
               variants={fadeUp}
-              className="font-display text-[clamp(3rem,7.5vw,6.5rem)] font-medium leading-[0.92] tracking-[-0.04em] text-foreground"
+              className="font-display text-[clamp(2.25rem,8vw,6.5rem)] font-medium leading-[0.95] tracking-[-0.04em] text-foreground sm:leading-[0.92]"
             >
               Map the world{" "}
               <em className="font-light not-italic text-primary">
@@ -271,10 +271,10 @@ export default function LandingPage() {
 
         {/* Stats strip */}
         <div className="border-t border-border bg-paper-deep/40">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-border border-x border-border px-0 sm:grid-cols-4">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-border border-border sm:grid-cols-4 sm:divide-y-0 sm:border-x">
             {stats.map((s) => (
-              <div key={s.label} className="px-5 py-7 sm:px-7">
-                <p className="numeral text-4xl text-foreground sm:text-5xl">
+              <div key={s.label} className="px-4 py-5 sm:px-7 sm:py-7">
+                <p className="numeral text-3xl text-foreground sm:text-5xl">
                   {s.value}
                   <span className="text-primary">{s.suffix}</span>
                 </p>
@@ -288,11 +288,11 @@ export default function LandingPage() {
       </section>
 
       {/* Marquee */}
-      <section aria-hidden className="border-b border-border bg-foreground py-5 text-background">
-        <div className="flex gap-12 overflow-hidden">
-          <div className="flex shrink-0 animate-marquee gap-12 whitespace-nowrap font-display text-3xl italic">
+      <section aria-hidden className="border-b border-border bg-foreground py-4 text-background sm:py-5">
+        <div className="flex gap-8 overflow-hidden sm:gap-12">
+          <div className="flex shrink-0 animate-marquee gap-8 whitespace-nowrap font-display text-xl italic sm:gap-12 sm:text-3xl">
             {[...marqueeWords, ...marqueeWords].map((w, i) => (
-              <span key={i} className="flex items-center gap-12">
+              <span key={i} className="flex items-center gap-8 sm:gap-12">
                 {w} <span className="text-primary-glow">✦</span>
               </span>
             ))}
@@ -306,7 +306,7 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
               <p className="marketing-section-label">Capabilities</p>
-              <h2 className="font-display mt-5 text-4xl leading-[0.95] tracking-tight sm:text-5xl">
+              <h2 className="font-display mt-5 text-[clamp(2rem,7vw,3rem)] leading-[0.95] tracking-tight">
                 Six tools.
                 <br />
                 <em className="font-light text-primary">One atlas.</em>
@@ -365,7 +365,7 @@ export default function LandingPage() {
             </div>
             <div className="space-y-6 lg:col-span-5 lg:py-6">
               <p className="marketing-section-label">Intelligence</p>
-              <h2 className="font-display text-4xl leading-[0.95] tracking-tight sm:text-[3rem]">
+              <h2 className="font-display text-[clamp(2rem,7vw,3rem)] leading-[0.95] tracking-tight">
                 The signal hidden in <em className="font-light text-primary">the noise.</em>
               </h2>
               <p className="text-base leading-relaxed text-muted-foreground">
@@ -392,10 +392,10 @@ export default function LandingPage() {
       {/* Use cases — editorial cards with imagery */}
       <section id="use-cases" className="border-b border-border py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="mb-12 grid items-end gap-6 sm:mb-16 sm:grid-cols-[1fr_auto]">
+          <div className="mb-10 grid items-end gap-4 sm:mb-16 sm:grid-cols-[1fr_auto] sm:gap-6">
             <div>
               <p className="marketing-section-label">For everyone in the ecosystem</p>
-              <h2 className="font-display mt-5 text-4xl leading-[0.95] tracking-tight sm:text-[3.25rem]">
+              <h2 className="font-display mt-5 text-[clamp(2rem,7vw,3.25rem)] leading-[0.95] tracking-tight">
                 Made for the <em className="font-light text-primary">connectors.</em>
               </h2>
             </div>
@@ -447,7 +447,7 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-12 lg:gap-14">
           <div className="space-y-6 lg:col-span-6">
             <p className="marketing-section-label">Impact</p>
-            <h2 className="font-display text-4xl leading-[0.95] tracking-tight sm:text-[3.5rem]">
+            <h2 className="font-display text-[clamp(2rem,8vw,3.5rem)] leading-[0.95] tracking-tight">
               Growth that <em className="font-light text-primary">takes root.</em>
             </h2>
             <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
@@ -485,11 +485,11 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section id="network" className="relative overflow-hidden border-b border-border py-24 sm:py-32">
+      <section id="network" className="relative overflow-hidden border-b border-border py-16 sm:py-32">
         <div className="absolute inset-0 dot-grid opacity-50" />
-        <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-8">
           <p className="marketing-section-label mx-auto inline-flex">Join the network</p>
-          <h2 className="font-display mt-6 text-5xl leading-[0.95] tracking-[-0.04em] sm:text-7xl">
+          <h2 className="font-display mt-6 text-[clamp(2.25rem,9vw,5rem)] leading-[0.95] tracking-[-0.04em] sm:text-7xl">
             Ready to <em className="font-light text-primary">map</em> what's
             <br />
             possible?

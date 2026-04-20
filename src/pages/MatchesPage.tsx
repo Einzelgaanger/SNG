@@ -120,7 +120,7 @@ export default function MatchesPage() {
               AI-powered partners based on shared interests, complementary roles, and cross-region opportunities.
             </p>
           </div>
-          <div className="font-mono-display text-right text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="font-mono-display flex items-baseline gap-3 text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground sm:block sm:text-right">
             <p className="numeral text-3xl text-foreground">{matches.length}</p>
             <p>candidates surfaced</p>
           </div>
@@ -170,7 +170,7 @@ export default function MatchesPage() {
           </div>
 
           {/* Advanced filters row */}
-          <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/40 bg-muted/30 px-3 py-2.5">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl border border-border/40 bg-muted/30 px-3 py-2.5">
             <label className="flex items-center gap-2 text-xs text-foreground">
               <MapPin className="h-3.5 w-3.5 text-primary" />
               <span>Near me</span>
@@ -192,13 +192,13 @@ export default function MatchesPage() {
                 </SelectContent>
               </Select>
             )}
-            <span className="h-4 w-px bg-border/60" />
+            <span className="hidden h-4 w-px bg-border/60 sm:block" />
             <label className="flex items-center gap-2 text-xs text-foreground">
               <Rocket className="h-3.5 w-3.5 text-primary" />
-              <span>With overlapping initiatives</span>
+              <span>Overlapping initiatives</span>
               <Switch checked={activeOnly} onCheckedChange={setActiveOnly} />
             </label>
-            <span className="ml-auto text-[11px] text-muted-foreground">
+            <span className="w-full text-[11px] text-muted-foreground sm:ml-auto sm:w-auto">
               {filtered.length} of {matches.length} matches
             </span>
           </div>

@@ -88,17 +88,17 @@ export default function GlobePage() {
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-background">
       {/* Top toolbar */}
-      <div className="relative z-20 flex items-center justify-between border-b border-border bg-card px-3 py-2 sm:px-4">
-        <div className="font-mono-display hidden items-center gap-3 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
+      <div className="relative z-20 flex items-center justify-between gap-2 border-b border-border bg-card px-3 py-2 sm:px-4">
+        <div className="font-mono-display flex min-w-0 items-center gap-2 overflow-hidden text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:gap-3 sm:text-[10.5px]">
           <span className="text-foreground">◉ Live</span>
           <span className="text-border">·</span>
-          <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
-          <span className="text-border">·</span>
-          <span>{arcs.length} arc{arcs.length !== 1 ? "s" : ""}</span>
-          <span className="text-border">·</span>
-          <span className="text-primary">{connCount} in network</span>
+          <span className="whitespace-nowrap">{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
+          <span className="hidden text-border sm:inline">·</span>
+          <span className="hidden whitespace-nowrap sm:inline">{arcs.length} arc{arcs.length !== 1 ? "s" : ""}</span>
+          <span className="hidden text-border sm:inline">·</span>
+          <span className="hidden whitespace-nowrap text-primary sm:inline">{connCount} in network</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           {visualModes.map((m) => (
             <button
               key={m.value}
@@ -113,6 +113,17 @@ export default function GlobePage() {
               {m.label}
             </button>
           ))}
+          {/* Mobile visual-mode select */}
+          <select
+            value={visualMode}
+            onChange={(e) => setVisualMode(e.target.value as VisualMode)}
+            className="font-mono-display rounded-sm border border-border bg-background px-2 py-1.5 text-[10.5px] uppercase tracking-[0.18em] text-foreground sm:hidden"
+            aria-label="Visual mode"
+          >
+            {visualModes.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
           <Separator orientation="vertical" className="mx-1 hidden h-5 sm:block" />
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-sm" onClick={() => setNavigatorOpen((v) => !v)}>
             <LayoutPanelLeft className="h-4 w-4" />
