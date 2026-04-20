@@ -1,14 +1,22 @@
 import { useMemo, useState } from "react";
-import { Globe2, Loader2, MapPin, Search, Sparkles, UserPlus, UserCheck } from "lucide-react";
+import { Globe2, Loader2, MapPin, Search, Sparkles, UserPlus, UserCheck, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useMatches } from "@/hooks/use-matches";
 import { useConnections } from "@/hooks/use-connections";
+import type { StakeholderType } from "@/types/sng";
 
 const typeColor: Record<string, string> = {
   entrepreneur: "bg-primary/10 text-primary",
@@ -20,23 +28,44 @@ const typeColor: Record<string, string> = {
   other: "bg-muted text-foreground",
 };
 
+const stakeholderFilters: { value: StakeholderType | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "entrepreneur", label: "Entrepreneur" },
+  { value: "investor", label: "Investor" },
+  { value: "university", label: "University" },
+  { value: "corporate", label: "Corporate" },
+  { value: "government", label: "Government" },
+  { value: "nonprofit", label: "Nonprofit" },
+];
+
+type SortKey = "score" | "name" | "region";
+
 export default function MatchesPage() {
   const { user } = useAuth();
-  const { data: matches = [], isLoading } = useMatches(user?.id, 30);
+  const { data: matches = [], isLoading } = useMatches(user?.id, 60);
   const { has, toggle } = useConnections();
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<StakeholderType | "all">("all");
+  const [sortBy, setSortBy] = useState<SortKey>("score");
 
   const filtered = useMemo(() => {
-    if (!search) return matches;
     const q = search.toLowerCase();
-    return matches.filter(
-      (m) =>
+    const list = matches.filter((m) => {
+      if (typeFilter !== "all" && m.stakeholder_type !== typeFilter) return false;
+      if (!q) return true;
+      return (
         m.display_name.toLowerCase().includes(q) ||
         m.organization_name.toLowerCase().includes(q) ||
         m.region.toLowerCase().includes(q) ||
-        m.interests.some((i) => i.toLowerCase().includes(q)),
-    );
-  }, [matches, search]);
+        m.interests.some((i) => i.toLowerCase().includes(q))
+      );
+    });
+    const sorted = [...list];
+    if (sortBy === "score") sorted.sort((a, b) => b.match_score - a.match_score);
+    if (sortBy === "name") sorted.sort((a, b) => a.display_name.localeCompare(b.display_name));
+    if (sortBy === "region") sorted.sort((a, b) => a.region.localeCompare(b.region));
+    return sorted;
+  }, [matches, search, typeFilter, sortBy]);
 
   const handleConnect = (id: string, name: string) => {
     const nowConnected = toggle(id);
