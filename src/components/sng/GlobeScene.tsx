@@ -15,6 +15,8 @@ interface GlobeSceneProps {
   showConnections: boolean;
   showCountries: boolean;
   stakeholders: Stakeholder[];
+  connectedIds?: Set<string>;
+  highMatchIds?: Set<string>;
   onSelect: (stakeholder: Stakeholder) => void;
 }
 
