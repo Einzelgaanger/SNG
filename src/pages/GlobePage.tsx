@@ -147,7 +147,7 @@ export default function GlobePage() {
         </AnimatePresence>
 
         <div className="relative flex-1">
-          <GlobeScene arcs={arcs} autoRotate={autoRotate} mode={visualMode} nightLights={nightLights} selectedId={selected?.id ?? null} showConnections={showConnections} showCountries={showCountries} stakeholders={filteredStakeholders} onSelect={(s) => { setSelectedId(s.id); setProfileOpen(true); }} />
+          <GlobeScene arcs={arcs} autoRotate={autoRotate} mode={visualMode} nightLights={nightLights} selectedId={selected?.id ?? null} showConnections={showConnections} showCountries={showCountries} stakeholders={filteredStakeholders} connectedIds={connectedSet} highMatchIds={highMatchSet} onSelect={(s) => { setSelectedId(s.id); setProfileOpen(true); }} />
 
           <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-center gap-2">
             {[
