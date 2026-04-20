@@ -392,10 +392,10 @@ export default function LandingPage() {
       {/* Use cases — editorial cards with imagery */}
       <section id="use-cases" className="border-b border-border py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="mb-12 grid items-end gap-6 sm:mb-16 sm:grid-cols-[1fr_auto]">
+          <div className="mb-10 grid items-end gap-4 sm:mb-16 sm:grid-cols-[1fr_auto] sm:gap-6">
             <div>
               <p className="marketing-section-label">For everyone in the ecosystem</p>
-              <h2 className="font-display mt-5 text-4xl leading-[0.95] tracking-tight sm:text-[3.25rem]">
+              <h2 className="font-display mt-5 text-[clamp(2rem,7vw,3.25rem)] leading-[0.95] tracking-tight">
                 Made for the <em className="font-light text-primary">connectors.</em>
               </h2>
             </div>
