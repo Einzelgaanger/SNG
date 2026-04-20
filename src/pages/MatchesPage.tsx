@@ -109,13 +109,20 @@ export default function MatchesPage() {
     <div className="app-page">
       <div className="app-container">
         <div className="app-header">
-          <div>
-            <h1 className="app-header-title flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" /> Matches
+          <div className="space-y-3">
+            <span className="eyebrow-primary">
+              <Sparkles className="h-3 w-3" /> Index 02 · Matches
+            </span>
+            <h1 className="app-header-title">
+              Your collaboration <em className="font-light text-primary">signal.</em>
             </h1>
             <p className="app-header-description">
               AI-powered partners based on shared interests, complementary roles, and cross-region opportunities.
             </p>
+          </div>
+          <div className="font-mono-display text-right text-[10.5px] uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="numeral text-3xl text-foreground">{matches.length}</p>
+            <p>candidates surfaced</p>
           </div>
         </div>
 
@@ -220,7 +227,7 @@ export default function MatchesPage() {
                 return (
                   <article
                     key={m.member_id}
-                    className="group cursor-pointer rounded-2xl border border-border/40 bg-card p-4 text-left transition-all hover:border-primary/30 hover:shadow-sm"
+                    className="group cursor-pointer rounded-sm border border-border bg-card p-4 text-left transition-all hover:border-foreground hover:shadow-[4px_4px_0_0_hsl(var(--primary))]"
                     onClick={() => setOpenMatch(m)}
                     role="button"
                     tabIndex={0}
@@ -233,16 +240,18 @@ export default function MatchesPage() {
                   >
                     <header className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-foreground">{m.display_name}</p>
+                        <p className="font-display truncate text-base font-medium tracking-tight text-foreground">
+                          {m.display_name}
+                        </p>
                         <p className="truncate text-xs text-muted-foreground">{m.organization_name}</p>
                       </div>
-                      <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+                      <span className="font-mono-display rounded-none border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[11px] font-bold text-primary">
                         {m.match_score}%
                       </span>
                     </header>
 
-                    <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
-                      <Badge variant="secondary" className={`text-[10px] uppercase ${typeColor[m.stakeholder_type] || ""}`}>
+                    <div className="font-mono-display mt-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      <Badge variant="secondary" className={`rounded-none text-[9px] uppercase tracking-[0.18em] ${typeColor[m.stakeholder_type] || ""}`}>
                         {m.stakeholder_type}
                       </Badge>
                       <span className="inline-flex items-center gap-1">

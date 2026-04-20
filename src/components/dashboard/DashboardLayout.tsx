@@ -55,44 +55,54 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-muted/20">
+    <div className="flex h-screen bg-paper-deep/30">
       {/* Desktop sidebar */}
-      <aside className="hidden w-[260px] flex-col border-r border-border/50 bg-card/90 backdrop-blur lg:flex">
-        <div className="flex h-16 items-center gap-3 border-b border-border/40 px-5">
+      <aside className="hidden w-[260px] flex-col border-r border-border bg-card lg:flex">
+        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
           <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           <div className="ml-auto flex items-center gap-2">
             {isAdmin && (
-              <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Admin</span>
+              <span className="font-mono-display rounded-none border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-primary">
+                Admin
+              </span>
             )}
             {isModerator && !isAdmin && (
-              <span className="rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">Mod</span>
+              <span className="font-mono-display rounded-none border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-accent">
+                Mod
+              </span>
             )}
             <NotificationBell />
           </div>
         </div>
-        <nav className="flex-1 space-y-1 p-4">
-          {allNav.map((item) => {
+        <p className="font-mono-display px-5 pb-2 pt-5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+          ◉ Workspace
+        </p>
+        <nav className="flex-1 space-y-0.5 px-3">
+          {navItems.map((item) => {
             const active = location.pathname === item.path;
             return (
               <button
                 key={item.path}
                 type="button"
                 onClick={() => navigate(item.path)}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                className={`group relative flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all ${
                   active
-                    ? "bg-primary/10 text-primary shadow-sm"
-                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                    ? "bg-foreground text-background"
+                    : "text-foreground/70 hover:bg-paper-deep/60 hover:text-foreground"
                 }`}
               >
-                <item.icon className="h-4 w-4" />
+                {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 bg-primary" />}
+                <item.icon className="h-4 w-4" strokeWidth={1.75} />
                 {item.label}
               </button>
             );
           })}
           {isAdmin && (
             <>
-              <Separator className="my-2" />
-              <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">Administration</p>
+              <div className="my-3 h-px bg-border" />
+              <p className="font-mono-display px-3 pb-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+                ◉ Administration
+              </p>
               {adminItems.map((item) => {
                 const active = location.pathname === item.path;
                 return (
@@ -100,13 +110,14 @@ export default function DashboardLayout() {
                     key={item.path}
                     type="button"
                     onClick={() => navigate(item.path)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                    className={`relative flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all ${
                       active
-                        ? "bg-primary/10 text-primary shadow-sm"
-                        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        ? "bg-foreground text-background"
+                        : "text-foreground/70 hover:bg-paper-deep/60 hover:text-foreground"
                     }`}
                   >
-                    <item.icon className="h-4 w-4" />
+                    {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 bg-primary" />}
+                    <item.icon className="h-4 w-4" strokeWidth={1.75} />
                     {item.label}
                   </button>
                 );
@@ -114,12 +125,14 @@ export default function DashboardLayout() {
             </>
           )}
         </nav>
-        <div className="border-t border-border/40 p-3">
-          <div className="mb-2 rounded-lg border border-border/40 bg-muted/60 px-3 py-2.5">
+        <div className="border-t border-border p-3">
+          <div className="mb-2 rounded-sm border border-border bg-paper-deep/40 px-3 py-2.5">
             <p className="truncate text-sm font-medium text-foreground">{profile?.display_name || "User"}</p>
-            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+            <p className="font-mono-display truncate text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+              {user.email}
+            </p>
           </div>
-          <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground" onClick={handleSignOut}>
+          <Button variant="ghost" size="sm" className="w-full justify-start rounded-sm text-muted-foreground" onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" /> Sign out
           </Button>
         </div>
@@ -127,7 +140,7 @@ export default function DashboardLayout() {
 
       {/* Mobile header */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 items-center justify-between border-b border-border/50 bg-card/90 px-4 backdrop-blur lg:hidden">
+        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
           <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
           <div className="flex items-center gap-1">
             <NotificationBell />
