@@ -198,6 +198,23 @@ export default function GlobePage() {
                           <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3 text-primary/60" />Score {selected.score}</span>
                         </div>
                       </div>
+                      {!selected.isViewer && (
+                        <Button
+                          size="sm"
+                          variant={isConn(selected.id) ? "secondary" : "default"}
+                          className="w-full"
+                          onClick={() => {
+                            const nowOn = toggleConn(selected.id);
+                            toast.success(nowOn ? `Connected with ${selected.name}` : `Removed connection with ${selected.name}`);
+                          }}
+                        >
+                          {isConn(selected.id) ? (
+                            <><UserCheck className="mr-1.5 h-4 w-4" /> Connected</>
+                          ) : (
+                            <><UserPlus className="mr-1.5 h-4 w-4" /> Connect</>
+                          )}
+                        </Button>
+                      )}
                       <p className="text-sm leading-relaxed text-muted-foreground">{selected.bio}</p>
                       {selected.metrics.length > 0 && (
                         <div className="grid gap-2">
