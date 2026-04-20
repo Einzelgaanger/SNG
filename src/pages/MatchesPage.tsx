@@ -14,8 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
-import { useMatches } from "@/hooks/use-matches";
+import { useMatches, type MatchRow } from "@/hooks/use-matches";
 import { useConnections } from "@/hooks/use-connections";
+import { MatchProfileDialog } from "@/components/sng/MatchProfileDialog";
 import type { StakeholderType } from "@/types/sng";
 
 const typeColor: Record<string, string> = {
@@ -47,6 +48,7 @@ export default function MatchesPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<StakeholderType | "all">("all");
   const [sortBy, setSortBy] = useState<SortKey>("score");
+  const [openMatch, setOpenMatch] = useState<MatchRow | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -153,7 +155,16 @@ export default function MatchesPage() {
                 return (
                   <article
                     key={m.member_id}
-                    className="rounded-2xl border border-border/40 bg-card p-4 transition-all hover:border-primary/30 hover:shadow-sm"
+                    className="group cursor-pointer rounded-2xl border border-border/40 bg-card p-4 text-left transition-all hover:border-primary/30 hover:shadow-sm"
+                    onClick={() => setOpenMatch(m)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setOpenMatch(m);
+                      }
+                    }}
                   >
                     <header className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -202,7 +213,10 @@ export default function MatchesPage() {
                       size="sm"
                       variant={connected ? "secondary" : "default"}
                       className="mt-3 w-full"
-                      onClick={() => handleConnect(m.member_id, m.display_name)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleConnect(m.member_id, m.display_name);
+                      }}
                     >
                       {connected ? (
                         <>
@@ -221,6 +235,12 @@ export default function MatchesPage() {
           </ScrollArea>
         </div>
       </div>
+
+      <MatchProfileDialog
+        match={openMatch}
+        open={Boolean(openMatch)}
+        onOpenChange={(o) => !o && setOpenMatch(null)}
+      />
     </div>
   );
 }
