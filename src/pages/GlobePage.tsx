@@ -4,17 +4,20 @@ import {
   Eye,
   Filter,
   Globe2,
-  Layers,
   LayoutPanelLeft,
   MapPin,
   Moon,
   Network,
   Orbit,
   Search,
+  UserCheck,
+  UserPlus,
   UserRound,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
+import { useConnections } from "@/hooks/use-connections";
 
 import { GlobeScene } from "@/components/sng/GlobeScene";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +50,7 @@ const visualModes: { value: VisualMode; label: string }[] = [
 export default function GlobePage() {
   const { user } = useAuth();
   const { data: stakeholders = [] } = useNetworkMembers(user?.id);
+  const { has: isConn, toggle: toggleConn, count: connCount } = useConnections();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
@@ -82,6 +86,8 @@ export default function GlobePage() {
           <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
           <span>{arcs.length} connection{arcs.length !== 1 ? "s" : ""}</span>
+          <span className="text-border">·</span>
+          <span className="text-primary">{connCount} in your network</span>
         </div>
         <div className="flex items-center gap-1.5">
           {visualModes.map((m) => (
