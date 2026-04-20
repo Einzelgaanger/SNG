@@ -1,22 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { useMatches } from "@/hooks/use-matches";
 import { useProfile } from "@/hooks/use-profile";
 import { useConnections } from "@/hooks/use-connections";
 import { usePreferences } from "@/hooks/use-preferences";
-import {
-  AppNotification,
-  getReadIds,
-  subscribeRead,
-} from "@/lib/notifications-store";
+import { useNotificationReads } from "@/hooks/use-notification-reads";
+import { AppNotification } from "@/lib/notifications-store";
 import type { ProximityRadius } from "@/lib/preferences-store";
 import type { MatchRow } from "@/hooks/use-matches";
 import type { ProfileRecord } from "@/types/sng";
 
 const HOUR = 60 * 60 * 1000;
 
-/** Returns true if the match falls inside the user's proximity preference. */
 function withinProximity(
   m: MatchRow,
   profile: ProfileRecord | null | undefined,
@@ -30,9 +26,8 @@ function withinProximity(
 }
 
 /**
- * Derives a live notification feed from the user's matches, profile completeness,
- * and connections. Honors the user's notification preferences (min score, proximity,
- * channel toggles).
+ * Derives a live notification feed from matches, connections, and profile.
+ * Read state is persisted in the database via `useNotificationReads`.
  */
 export function useNotifications() {
   const { user } = useAuth();
@@ -40,15 +35,12 @@ export function useNotifications() {
   const { data: matches = [] } = useMatches(user?.id, 60);
   const { ids: connectedIds } = useConnections();
   const { prefs } = usePreferences();
-
-  const [readIds, setReadIds] = useState<Set<string>>(() => getReadIds());
-  useEffect(() => subscribeRead(() => setReadIds(getReadIds())), []);
+  const { readIds, markRead, markAllRead } = useNotificationReads();
 
   const notifications = useMemo<AppNotification[]>(() => {
     const list: AppNotification[] = [];
     const now = Date.now();
 
-    // 1) Welcome — always shown
     if (profile) {
       list.push({
         id: "welcome",
@@ -60,7 +52,6 @@ export function useNotifications() {
       });
     }
 
-    // 2) New match alerts (filtered by min score + proximity)
     if (prefs.notifyNewMatches) {
       const eligible = matches
         .filter((m) => m.match_score >= prefs.minMatchScore)
@@ -74,9 +65,7 @@ export function useNotifications() {
             m.match_score >= 70
               ? `${m.display_name} is a strong match (${m.match_score}%)`
               : `Cross-region opportunity: ${m.display_name}`,
-          body:
-            m.match_reasons[0] ||
-            `${m.organization_name} · ${m.city}, ${m.region}`,
+          body: m.match_reasons[0] || `${m.organization_name} · ${m.city}, ${m.region}`,
           ts: now - (2 + idx * 7) * HOUR,
           link: "/app/matches",
           meta: { score: m.match_score },
@@ -84,11 +73,8 @@ export function useNotifications() {
       });
     }
 
-    // 3) Location overlap
     if (prefs.notifyLocationOverlap && profile?.region) {
-      const local = matches.find(
-        (m) => m.region === profile.region && m.match_score >= 60,
-      );
+      const local = matches.find((m) => m.region === profile.region && m.match_score >= 60);
       if (local) {
         list.push({
           id: `local:${local.member_id}`,
@@ -101,22 +87,18 @@ export function useNotifications() {
       }
     }
 
-    // 4) Connection confirmations — always shown (they reflect real user actions)
     connectedIds.slice(0, 3).forEach((id, idx) => {
       const m = matches.find((x) => x.member_id === id);
       list.push({
         id: `conn:${id}`,
         kind: "connection",
         title: m ? `You connected with ${m.display_name}` : "New connection added",
-        body: m
-          ? `${m.organization_name} · ${m.city}`
-          : "View your network on the globe.",
+        body: m ? `${m.organization_name} · ${m.city}` : "View your network on the globe.",
         ts: now - (1 + idx * 4) * HOUR,
         link: "/app/network",
       });
     });
 
-    // 5) Profile strength alert
     if (prefs.notifyProfileTips && profile) {
       const fields = [
         profile.bio,
@@ -136,8 +118,7 @@ export function useNotifications() {
           id: "profile-strength",
           kind: "profile_strength",
           title: "Strengthen your profile to unlock 3× more matches",
-          body:
-            "Add your bio, top interests, and current initiatives so the network can find you.",
+          body: "Add your bio, top interests, and current initiatives so the network can find you.",
           ts: now - 18 * HOUR,
           link: "/app/settings",
         });
@@ -152,5 +133,8 @@ export function useNotifications() {
     [notifications, readIds],
   );
 
-  return { notifications, readIds, unreadCount };
+  // Avoid stale-warnings on unmounted effects.
+  useEffect(() => {}, []);
+
+  return { notifications, readIds, unreadCount, markRead, markAllRead };
 }

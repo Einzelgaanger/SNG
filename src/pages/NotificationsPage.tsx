@@ -15,8 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications } from "@/hooks/use-notifications";
 import {
   AppNotification,
-  markAllRead,
-  markRead,
   relativeTime,
 } from "@/lib/notifications-store";
 
