@@ -162,15 +162,18 @@ function GlobeObject({
     </group>
   );
 }
+
+export function GlobeScene(props: GlobeSceneProps) {
+  const bgColor = props.mode === "satellite" ? "#000814" : "#080d1a";
   return (
     <div className="h-full w-full overflow-hidden rounded-none">
       <Canvas camera={{ position: [0, 0, 260], fov: 38 }}>
-        <color attach="background" args={["#080d1a"]} />
-        <fog attach="fog" args={["#080d1a", 240, 420]} />
-        <ambientLight intensity={1.1} />
-        <directionalLight position={[220, 120, 160]} intensity={1.6} />
+        <color attach="background" args={[bgColor]} />
+        <fog attach="fog" args={[bgColor, 240, 420]} />
+        <ambientLight intensity={props.mode === "satellite" ? 0.85 : 1.1} />
+        <directionalLight position={[220, 120, 160]} intensity={props.mode === "satellite" ? 2.1 : 1.6} />
         <Suspense fallback={null}>
-          <Stars radius={300} depth={80} count={2500} factor={3} saturation={0.1} fade speed={0.3} />
+          <Stars radius={300} depth={80} count={props.mode === "simple" ? 800 : 2500} factor={3} saturation={0.1} fade speed={0.3} />
           <GlobeObject {...props} />
         </Suspense>
         <OrbitControls enablePan={false} minDistance={180} maxDistance={340} autoRotate={false} />
