@@ -37,7 +37,7 @@ function iconFor(kind: AppNotification["kind"]) {
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
-  const { notifications, readIds, unreadCount } = useNotifications();
+  const { notifications, readIds, unreadCount, markRead, markAllRead } = useNotifications();
 
   return (
     <div className="app-page">
