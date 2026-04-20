@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import GlobePage from "./pages/GlobePage";
+import MatchesPage from "./pages/MatchesPage";
 import ProfileSettings from "./pages/ProfileSettings";
 import AdminUsers from "./pages/AdminUsers";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/app" element={<DashboardLayout />}>
               <Route index element={<GlobePage />} />
+              <Route path="matches" element={<MatchesPage />} />
               <Route path="settings" element={<ProfileSettings />} />
               <Route path="admin/users" element={<AdminUsers />} />
             </Route>
