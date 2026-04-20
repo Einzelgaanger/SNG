@@ -4,17 +4,20 @@ import {
   Eye,
   Filter,
   Globe2,
-  Layers,
   LayoutPanelLeft,
   MapPin,
   Moon,
   Network,
   Orbit,
   Search,
+  UserCheck,
+  UserPlus,
   UserRound,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
+import { useConnections } from "@/hooks/use-connections";
 
 import { GlobeScene } from "@/components/sng/GlobeScene";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +50,7 @@ const visualModes: { value: VisualMode; label: string }[] = [
 export default function GlobePage() {
   const { user } = useAuth();
   const { data: stakeholders = [] } = useNetworkMembers(user?.id);
+  const { has: isConn, toggle: toggleConn, count: connCount } = useConnections();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [visualMode, setVisualMode] = useState<VisualMode>("enhanced");
@@ -82,6 +86,8 @@ export default function GlobePage() {
           <span>{stakeholders.length} node{stakeholders.length !== 1 ? "s" : ""}</span>
           <span className="text-border">·</span>
           <span>{arcs.length} connection{arcs.length !== 1 ? "s" : ""}</span>
+          <span className="text-border">·</span>
+          <span className="text-primary">{connCount} in your network</span>
         </div>
         <div className="flex items-center gap-1.5">
           {visualModes.map((m) => (
@@ -192,6 +198,23 @@ export default function GlobePage() {
                           <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3 text-primary/60" />Score {selected.score}</span>
                         </div>
                       </div>
+                      {!selected.isViewer && (
+                        <Button
+                          size="sm"
+                          variant={isConn(selected.id) ? "secondary" : "default"}
+                          className="w-full"
+                          onClick={() => {
+                            const nowOn = toggleConn(selected.id);
+                            toast.success(nowOn ? `Connected with ${selected.name}` : `Removed connection with ${selected.name}`);
+                          }}
+                        >
+                          {isConn(selected.id) ? (
+                            <><UserCheck className="mr-1.5 h-4 w-4" /> Connected</>
+                          ) : (
+                            <><UserPlus className="mr-1.5 h-4 w-4" /> Connect</>
+                          )}
+                        </Button>
+                      )}
                       <p className="text-sm leading-relaxed text-muted-foreground">{selected.bio}</p>
                       {selected.metrics.length > 0 && (
                         <div className="grid gap-2">

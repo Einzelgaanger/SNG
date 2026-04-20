@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Globe2, LogOut, Menu, Settings, Users, X } from "lucide-react";
+import { Globe2, LogOut, Menu, Settings, Sparkles, Users, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LoadingScreen } from "@/components/auth/LoadingScreen";
@@ -13,6 +13,7 @@ import vggLogo from "@/assets/vgg-logo.webp";
 
 const navItems = [
   { path: "/app", label: "Globe", icon: Globe2, roles: ["user", "moderator", "admin"] },
+  { path: "/app/matches", label: "Matches", icon: Sparkles, roles: ["user", "moderator", "admin"] },
   { path: "/app/settings", label: "Settings", icon: Settings, roles: ["user", "moderator", "admin"] },
 ];
 

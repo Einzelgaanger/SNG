@@ -48,6 +48,8 @@ export default function ProfileSettings() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [phone, setPhone] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
+  const [initiatives, setInitiatives] = useState<string[]>([]);
+  const [newInitiative, setNewInitiative] = useState("");
   const [fundingUsd, setFundingUsd] = useState("");
   const [peopleReached, setPeopleReached] = useState("");
   const [annualBudget, setAnnualBudget] = useState("");
@@ -65,6 +67,7 @@ export default function ProfileSettings() {
       setWebsiteUrl(profile.website_url || "");
       setPhone(profile.phone || "");
       setInterests(profile.interests || []);
+      setInitiatives(profile.initiatives || []);
       const im = profile.impact_metrics as Record<string, string | number | undefined> | undefined;
       setFundingUsd(String(im?.fundingUsd || ""));
       setPeopleReached(String(im?.peopleReached || ""));
@@ -87,6 +90,7 @@ export default function ProfileSettings() {
         website_url: websiteUrl || null,
         phone: phone || null,
         interests,
+        initiatives,
         impact_metrics: {
           fundingUsd: fundingUsd || null,
           peopleReached: peopleReached || null,
@@ -193,7 +197,54 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        {/* Impact */}
+        {/* Initiatives */}
+        <section className="surface-card space-y-4">
+          <h2 className="text-lg font-medium text-foreground">Initiatives</h2>
+          <p className="text-xs text-muted-foreground">Programs, projects, or campaigns you're driving.</p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add an initiative…"
+              value={newInitiative}
+              onChange={(e) => setNewInitiative(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newInitiative.trim()) {
+                  e.preventDefault();
+                  setInitiatives([...initiatives, newInitiative.trim()]);
+                  setNewInitiative("");
+                }
+              }}
+              className="h-11 border-border/50 bg-card/50"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                if (!newInitiative.trim()) return;
+                setInitiatives([...initiatives, newInitiative.trim()]);
+                setNewInitiative("");
+              }}
+            >
+              Add
+            </Button>
+          </div>
+          {initiatives.length > 0 && (
+            <div className="space-y-2">
+              {initiatives.map((init, idx) => (
+                <div key={`${init}-${idx}`} className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-3 py-2.5">
+                  <span className="text-sm text-foreground">{init}</span>
+                  <button
+                    type="button"
+                    onClick={() => setInitiatives(initiatives.filter((_, i) => i !== idx))}
+                    className="text-xs text-muted-foreground transition hover:text-destructive"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         <section className="surface-card space-y-4">
           <h2 className="text-lg font-medium text-foreground">Impact Metrics</h2>
           <div className="grid gap-3 sm:grid-cols-3">
