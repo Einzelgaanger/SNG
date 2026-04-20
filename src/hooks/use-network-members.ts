@@ -23,7 +23,6 @@ interface NetworkMemberRow {
 
 function rowToStakeholder(row: NetworkMemberRow, viewerUserId?: string): Stakeholder {
   const metricEntries = Object.entries(row.impact_metrics ?? {}).filter(([, v]) => v);
-
   return {
     id: row.id,
     name: row.display_name,
@@ -46,22 +45,20 @@ function rowToStakeholder(row: NetworkMemberRow, viewerUserId?: string): Stakeho
   };
 }
 
-export function useNetworkMembers(viewerUserId?: string) {
+export function useNetworkMembers(viewerUserId?: string, limit = 600) {
   return useQuery({
-    queryKey: ["network-members"],
+    queryKey: ["network-members-sample", viewerUserId, limit],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("network_members")
-        .select("*")
-        .eq("is_active", true)
-        .order("score", { ascending: false });
-
+      const { data, error } = await supabase.rpc("get_globe_sample", {
+        _viewer_id: viewerUserId ?? null,
+        _limit: limit,
+      });
       if (error) throw error;
-
       return (data as unknown as NetworkMemberRow[]).map((row) =>
-        rowToStakeholder(row, viewerUserId)
+        rowToStakeholder(row, viewerUserId),
       );
     },
     enabled: Boolean(viewerUserId),
+    staleTime: 60_000,
   });
 }
