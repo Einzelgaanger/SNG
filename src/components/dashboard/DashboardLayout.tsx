@@ -162,19 +162,22 @@ export default function DashboardLayout() {
                 onClick={() => setSidebarOpen(false)}
               />
               <motion.div
-                initial={{ x: -280 }}
+                initial={{ x: -300 }}
                 animate={{ x: 0 }}
-                exit={{ x: -280 }}
+                exit={{ x: -300 }}
                 transition={{ type: "spring", damping: 26, stiffness: 260 }}
-                className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-border/50 bg-card/95 backdrop-blur lg:hidden"
+                className="fixed left-0 top-0 z-50 flex h-full w-[86vw] max-w-[300px] flex-col border-r border-border bg-card lg:hidden"
               >
-                <div className="flex h-16 items-center justify-between border-b border-border/40 px-5">
+                <div className="flex h-16 items-center justify-between border-b border-border px-5">
                   <img src={vggLogo} alt="VGG" className="h-6 w-auto" />
                   <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                <nav className="flex-1 space-y-1 p-3">
+                <p className="font-mono-display px-5 pb-2 pt-5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+                  ◉ Workspace
+                </p>
+                <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
                   {allNav.map((item) => {
                     const active = location.pathname === item.path;
                     return (
@@ -182,18 +185,27 @@ export default function DashboardLayout() {
                         key={item.path}
                         type="button"
                         onClick={() => { navigate(item.path); setSidebarOpen(false); }}
-                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                          active ? "bg-primary/10 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                        className={`relative flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all ${
+                          active
+                            ? "bg-foreground text-background"
+                            : "text-foreground/70 hover:bg-paper-deep/60 hover:text-foreground"
                         }`}
                       >
-                        <item.icon className="h-4 w-4" />
+                        {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 bg-primary" />}
+                        <item.icon className="h-4 w-4" strokeWidth={1.75} />
                         {item.label}
                       </button>
                     );
                   })}
                 </nav>
-                <div className="border-t border-border/40 p-3">
-                  <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground" onClick={handleSignOut}>
+                <div className="border-t border-border p-3">
+                  <div className="mb-2 rounded-sm border border-border bg-paper-deep/40 px-3 py-2.5">
+                    <p className="truncate text-sm font-medium text-foreground">{profile?.display_name || "User"}</p>
+                    <p className="font-mono-display truncate text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="sm" className="w-full justify-start rounded-sm text-muted-foreground" onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" /> Sign out
                   </Button>
                 </div>
