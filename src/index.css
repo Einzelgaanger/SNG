@@ -120,7 +120,7 @@
   }
 
   .app-container {
-    @apply mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-8 sm:py-10;
+    @apply mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:space-y-8 sm:px-8 sm:py-10;
   }
 
   .app-header {
@@ -128,7 +128,7 @@
   }
 
   .app-header-title {
-    @apply font-display text-3xl font-medium tracking-tight sm:text-[2.5rem];
+    @apply font-display text-[clamp(1.75rem,6vw,2.5rem)] font-medium leading-[1.05] tracking-tight;
   }
 
   .app-header-description {
@@ -162,7 +162,7 @@
   }
 
   .auth-form-shell {
-    @apply rounded-sm border border-border bg-card p-7 shadow-[0_1px_0_hsl(var(--ink)/0.04),0_24px_60px_-30px_hsl(var(--ink)/0.18)] sm:p-9;
+    @apply rounded-sm border border-border bg-card p-5 shadow-[0_1px_0_hsl(var(--ink)/0.04),0_24px_60px_-30px_hsl(var(--ink)/0.18)] sm:p-7 lg:p-9;
   }
 
   .marketing-section-label {

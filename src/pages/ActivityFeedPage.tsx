@@ -69,7 +69,7 @@ export default function ActivityFeedPage() {
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-1.5 h-4 w-4" /> New Post
               </Button>
             </DialogTrigger>
@@ -236,7 +236,7 @@ function NewPostDialog({
   };
 
   return (
-    <DialogContent className="sm:max-w-lg">
+    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>Share with your network</DialogTitle>
       </DialogHeader>
