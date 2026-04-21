@@ -128,7 +128,7 @@ export default function AdminUsers() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
                     {roleConfig.map((rc) => {
                       const has = userRoles.includes(rc.value);
                       return (
@@ -137,7 +137,7 @@ export default function AdminUsers() {
                           type="button"
                           onClick={() => handleToggleRole(p.user_id, rc.value)}
                           disabled={assignRole.isPending || removeRole.isPending}
-                          className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border px-3 py-1.5 text-xs font-medium transition-all sm:flex-none ${
                             has
                               ? "border-primary/30 bg-primary/10 text-primary"
                               : "border-border/40 text-muted-foreground hover:border-primary/20 hover:text-foreground"

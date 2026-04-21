@@ -370,8 +370,8 @@ export default function ProfileSettings() {
           </div>
         </section>
 
-        <div className="flex justify-end pb-2">
-          <Button onClick={handleSave} disabled={isSaving}>
+        <div className="flex justify-stretch pb-2 sm:justify-end">
+          <Button onClick={handleSave} disabled={isSaving} className="w-full sm:w-auto">
             <Save className="mr-2 h-4 w-4" />
             {isSaving ? "Saving…" : "Save Changes"}
           </Button>
