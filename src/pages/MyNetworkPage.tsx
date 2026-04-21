@@ -127,7 +127,6 @@ export default function MyNetworkPage() {
                       <span className="text-xs text-muted-foreground">{list.length}</span>
                     </header>
                     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-{/* keep existing code */}
                       {list.map((m) => (
                         <article
                           key={m.id}
